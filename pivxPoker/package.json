@@ -15,7 +15,7 @@
     "Rest",
     "MERN"
   ],
-  "author": "Vovochka Perepelkin Vladimir",
+  "author": "Vovochka Perepelkin Vladimir, PIVX LABS",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 var _ = require('lodash');
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 module.exports.generateServerSeed = () => crypto.randomBytes(256).toString('hex');
 module.exports.sha256 = (seed) => {
   return crypto.createHash('sha256').update(seed).digest('hex');
@@ -14,7 +13,7 @@ function* byteGenerator({ serverSeed, clientSeed, nonce, cursor }) {
   let currentRoundCursor = cursor;
   currentRoundCursor -= currentRound * 32;
   // console.log("in byteGenerator");
-  // Generate outputs until cursor requirement fullfilled
+  // Generate outputs until cursor requirement fulfilled
   while (true) {
     // HMAC function used to output provided inputs into bytes
     const hmac = crypto.createHmac('sha256', serverSeed);

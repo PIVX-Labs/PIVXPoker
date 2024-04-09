@@ -45,7 +45,7 @@ exports.signup = async (req, res) => {
 
     //get new address
     const respond = await getNewAddress();
-    console.log(respond);
+
     if (respond && respond.error == null) {
       userData.address = respond.result;
 
@@ -203,8 +203,13 @@ exports.authenticate = async (req, res) => {
 exports.profile = async (req, res, next) => {
   const user = await User.findById(req.user.id);
   if (req.body.avatar) {
+    
     if (user.profilePhoto) {
-      require('fs').unlinkSync('./uploads/avatars/' + user.profilePhoto);
+      //check if file exists and if it does remove it, should only occur if server has an issue or accounts were created before and the image wasn't 
+      //copied over
+      if(fs.existsSync('./uploads/avatars/' + user.profilePhoto)){
+          require('fs').unlinkSync('./uploads/avatars/' + user.profilePhoto);
+      }
     }
     user.profilePhoto = user.username + '.jpg';
     await user.save();
@@ -222,6 +227,7 @@ exports.profile = async (req, res, next) => {
         }
       }
     );
+
   } else {
     return res.status(400).json({});
   }
@@ -279,6 +285,8 @@ exports.getBonus = async (req, res, next) => {
       item.push(ele.amount);
       return item;
     });
+    console.log(downLines)
+    console.log(bonus)
     return res.status(200).json({
       downLines,
       bonus

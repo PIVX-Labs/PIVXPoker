@@ -6,21 +6,18 @@ run `/bin/pivxd -daemon`
 create a file in ~/.pivx/pivx.conf   
 **PLEASE CHANGE THE RPCUSER AND PASSWORD ON YOUR VERSION IT ALSO NEEDS TO BE CHANGE IN THE .ENV FILE**
 
-```               
-zmqpubrawtx=tcp://127.0.0.1:28332 
-testnet
-walletnotify 
+```                               
+zmqpubrawtx=tcp://127.0.0.1:28332
+walletnotify
 rpcuser=root
 rpcpassword=password
 rpcallowip=127.0.0.1
 server=1
 daemon=1
 maxconnections=256
-testnet=1
-server=1
 par=1
 rpcbind=127.0.0.1
-rpcport=3335
+rpcport=51475
 rpcclienttimeout=30
 rpcthreads=5
 rpcworkqueue=1000
