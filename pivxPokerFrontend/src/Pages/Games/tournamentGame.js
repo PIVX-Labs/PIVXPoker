@@ -1,109 +1,87 @@
-import { connect } from "react-redux";
-import React, {useRef} from "react";
-import { withRouter } from "react-router-dom";
-import Drawer from "@material-ui/core/Drawer";
-import clsx from "clsx";
-import Menu from "@material-ui/core/Menu";
-import { bindActionCreators } from "redux";
-import MenuItem from "@material-ui/core/MenuItem";
-import Hidden from "@material-ui/core/Hidden";
-import Backdrop from "@material-ui/core/Backdrop";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import io from "socket.io-client";
-import { MdMenu } from "react-icons/md";
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import clsx from 'clsx';
+import React, { useRef } from 'react';
+import { MdMenu } from 'react-icons/md';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import io from 'socket.io-client';
 
-import Button from "../../Components/Button";
-import PokerTable from "../../images/poker-table.png";
-import PokerTableMobile from "../../images/poker-table-mobile.png";
-import PrettoSlider from "../../Components/PrettoSlider";
-import {
-  AiFillWechat,
-  AiOutlineClose,
-  AiOutlineLogout,
-  AiOutlinePlus,
-  AiOutlineMinus,
-} from "react-icons/ai";
-import "../../css/games.css";
-import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
-import { getCards, getCardSrc } from "../../Components/cards";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import Chip from "../../Components/Chip";
-import gameStyle from "../../jss/pages/cashGameStyle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { chips, ranks, tournamentBlindList } from "../../shared/constants";
-import Modal from "@material-ui/core/Modal";
-import Fade from "@material-ui/core/Fade";
-import Grid from "@material-ui/core/Grid";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import Paper from "@material-ui/core/Paper";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import {
-  showKilo,
-  showTurnTime,
-  showTableSize,
-  showDot,
-  showPotChips,
-} from "../../shared/printConfig";
-import handleToast, { success } from "../../Components/toast";
+import Fade from '@material-ui/core/Fade';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
+import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useEffect, useState } from 'react';
+import Avatar from 'react-avatar';
+import { AiFillWechat, AiOutlineLogout, AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
+import Button from '../../Components/Button';
+import Chip from '../../Components/Chip';
+import PrettoSlider from '../../Components/PrettoSlider';
+import { getCardSrc, getCards } from '../../Components/cards';
+import handleToast, { success } from '../../Components/toast';
+import '../../css/games.css';
+import PokerTableMobile from '../../images/poker-table-mobile.png';
+import PokerTable from '../../images/poker-table.png';
+import gameStyle from '../../jss/pages/cashGameStyle';
+import { chips, ranks, tournamentBlindList } from '../../shared/constants';
+import { showDot, showKilo, showPotChips, showTurnTime } from '../../shared/printConfig';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white + "!important",
+    color: theme.palette.common.white + '!important'
   },
   body: {
-    fontSize: 14,
-  },
+    fontSize: 14
+  }
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover
+    }
+  }
 }))(TableRow);
 const useStyles = makeStyles(gameStyle);
-const TournamentGamesC = ({
-  match,
-  history,
-  status,
-  credential,
-  PIVXChange,
-  LogOutSuccess,
-}) => {
+const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogOutSuccess }) => {
   const classes = useStyles();
   const { apiConfig } = global;
   const theme = useTheme();
   const reference = useRef();
 
-  const lg = useMediaQuery(theme.breakpoints.up("lg"));
-  const md = useMediaQuery(theme.breakpoints.up("md"));
-  const sm = useMediaQuery(theme.breakpoints.up("sm"));
-  const xs = useMediaQuery(theme.breakpoints.up("xs"));
-  const [winnerText, setWinnerText] = useState("");
-  const [resultText, setResultText] = useState("");
-  const [passwordModal, setPasswordModal] = useState(false);
-  const [password, setPassword] = useState("");
-  const [seat, setSeat] = useState("");
-  const [socket, setSocket] = useState("");
+  const lg = useMediaQuery(theme.breakpoints.up('lg'));
+  const md = useMediaQuery(theme.breakpoints.up('md'));
+  const sm = useMediaQuery(theme.breakpoints.up('sm'));
+  const xs = useMediaQuery(theme.breakpoints.up('xs'));
+  const [winnerText, setWinnerText] = useState('');
+  const [resultText, setResultText] = useState('');
+  const [password, setPassword] = useState('');
+  const [socket, setSocket] = useState('');
   const [chatOpen, setChatOpen] = useState(!status.mobileView);
-  let [message, setMessage] = useState("");
+  let [message, setMessage] = useState('');
   let [messageList, setMessageList] = useState([]);
-  const [table, setTable] = useState("");
+  const [table, setTable] = useState('');
   const [mySeat, setMySeat] = useState(-1);
   const [progress, setProgress] = useState(100);
   const [call, setCall] = useState(0);
-  const [callStatus, setCallStatus] = useState("");
+  const [callStatus, setCallStatus] = useState('');
   const [raise, setRaise] = useState(0);
   const [minRaise, setMinRaise] = useState(0);
   const [maxRaise, setMaxRaise] = useState(0);
@@ -114,39 +92,39 @@ const TournamentGamesC = ({
   const [place, setPlace] = useState(0);
   const [closed, setClosed] = useState(false);
   const gotoLobby = () => {
-    history.push("/lobby");
+    history.push('/lobby');
   };
   const logout = () => {
-    socket.emit("tournament:leave", match.params.room, (res) => {
+    socket.emit('tournament:leave', match.params.room, (res) => {
       if (res == true) {
         LogOutSuccess();
-        history.push("/");
+        history.push('/');
       }
     });
   };
   const changeStand = () => {
     setStandMenu(null);
-    socket.emit("tournament:stand", match.params.room, (res) => {
+    socket.emit('tournament:stand', match.params.room, (res) => {
       setTable((table) => {
         const players = table.players.map((ele) => ele);
         players[mySeat].stand = res;
         setTable({
           ...table,
-          players,
+          players
         });
       });
     });
   };
   const leaveTable = () => {
     setStandMenu(null);
-    socket.emit("tournament:leave", match.params.room, (res) => {
+    socket.emit('tournament:leave', match.params.room, (res) => {
       if (res == true) {
         setTable((table) => {
           const players = table.players.map((ele) => ele);
           players[mySeat] = null;
           setTable({
             ...table,
-            players,
+            players
           });
           setMySeat(-1);
         });
@@ -154,43 +132,42 @@ const TournamentGamesC = ({
     });
   };
   const copyLink = () => {
-    const tmp_tag = document.createElement("input");
-    tmp_tag.value = apiConfig.app + "/games/tournament/" + table.id;
+    const tmp_tag = document.createElement('input');
+    tmp_tag.value = apiConfig.app + '/games/tournament/' + table.id;
     reference.current.appendChild(tmp_tag);
     tmp_tag.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     reference.current.removeChild(tmp_tag);
-    handleToast("Address copied!", success);
+    handleToast('Address copied!', success);
   };
   const setBehavior = (behavior) => {
-    socket.emit("tournament:behavior", match.params.room, behavior, (behavior) => {
+    socket.emit('tournament:behavior', match.params.room, behavior, (behavior) => {
       setTable((table) => {
         const newPlayers = JSON.parse(JSON.stringify(table.players));
         newPlayers[mySeat].behavior = behavior;
         return {
           ...table,
-          players: newPlayers,
+          players: newPlayers
         };
       });
     });
   };
   const bet = (status, amount) => {
-    socket.emit("tournament:bet", match.params.room, { status, amount });
+    socket.emit('tournament:bet', match.params.room, { status, amount });
   };
   const joinTable = () => {
     if (!credential.loginToken) {
-      handleToast("Please login to join the game!");
+      handleToast('Please login to join the game!');
       return;
     }
-    socket.emit("tournament:join", match.params.room, password, (res) => {
-
-      console.log("=====JOIN=====")
-      console.log(res.status)
-      console.log(res.TournamentGame)
+    socket.emit('tournament:join', match.params.room, password, (res) => {
+      console.log('=====JOIN=====');
+      console.log(res.status);
+      console.log(res.TournamentGame);
       if (res.status) {
         setTable(res.TournamentGame);
         PIVXChange(res.pivx);
-        console.log("tournament:join emit");
+        console.log('tournament:join emit');
       } else handleToast(res.message);
     });
   };
@@ -198,13 +175,9 @@ const TournamentGamesC = ({
   const sendMessage = (e) => {
     console.log(e.target.input_message.value);
     e.preventDefault();
-    if (e.target.input_message.value != "") {
-      socket.emit(
-        "chat:send",
-        "tournament_" + match.params.room,
-        e.target.input_message.value
-      );
-      setMessage("");
+    if (e.target.input_message.value != '') {
+      socket.emit('chat:send', 'tournament_' + match.params.room, e.target.input_message.value);
+      setMessage('');
     }
   };
   const gameChat = (
@@ -218,23 +191,11 @@ const TournamentGamesC = ({
         <div className="message-view">
           {messageList.map((msg, i) => (
             <div key={i}>
-              <span
-                className={
-                  credential.loginUserId == msg.sender.id
-                    ? " text-success "
-                    : ""
-                }
-              >
-                {msg.sender.username}:{" "}
-                <span
-                  className={
-                    credential.loginUserId == msg.sender.id
-                      ? " text-success "
-                      : ""
-                  }
-                >
+              <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+                {msg.sender.username}:{' '}
+                <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
                   {msg.message}
-                </span>{" "}
+                </span>{' '}
               </span>
             </div>
           ))}
@@ -254,10 +215,7 @@ const TournamentGamesC = ({
           />
           <div className="input-group-append">
             <span className="input-group-text bg-white" id="basic-addon2">
-              <i
-                className="fa text-success fa-paper-plane"
-                aria-hidden="true"
-              ></i>
+              <i className="fa text-success fa-paper-plane" aria-hidden="true"></i>
             </span>
           </div>
         </div>
@@ -281,8 +239,8 @@ const TournamentGamesC = ({
       setSocket(
         io(apiConfig.endPoint, {
           auth: {
-            token: credential.loginToken,
-          },
+            token: credential.loginToken
+          }
         })
       );
     } else {
@@ -291,11 +249,11 @@ const TournamentGamesC = ({
   }, [credential.loginToken]);
   useEffect(() => {
     if (socket) {
-      socket.on("connect", () => {
+      socket.on('connect', () => {
         // when connection started
-        console.log("connect");
+        console.log('connect');
       });
-      socket.on("message", (res) => {
+      socket.on('message', (res) => {
         if (res.message) {
           handleToast(res.message, success);
         }
@@ -303,15 +261,15 @@ const TournamentGamesC = ({
           PIVXChange(res.pivx);
         }
       });
-      socket.emit("tournament:enter", match.params.room, (res) => {
-        console.log(res)
+      socket.emit('tournament:enter', match.params.room, (res) => {
+        console.log(res);
         setTable(res.TournamentGame);
         let id = res.TournamentGame.players.findIndex(
           (ele) => ele != null && ele.user.id == credential.loginUserId
         );
 
-        console.log("enter emit");
-        console.log(id)
+        console.log('enter emit');
+        console.log(id);
         console.log(res.TournamentGame.allowedBet);
         if (id > -1) {
           setMySeat(id);
@@ -324,28 +282,28 @@ const TournamentGamesC = ({
           }
         }
       });
-      socket.on("connect_error", (err) => {
-        console.error("tournament:error");
+      socket.on('connect_error', (err) => {
+        console.error('tournament:error');
         console.error(err.message);
       });
-      socket.on("tournament:join", ({ TournamentGame }) => {
-        console.log("tournament join");
+      socket.on('tournament:join', ({ TournamentGame }) => {
+        console.log('tournament join');
         console.log(TournamentGame);
         setTable((table) => {
           return {
-            ...TournamentGame,
+            ...TournamentGame
           };
         });
       });
-      socket.on("tournament:start", ({ TournamentGame }) => {
-        console.log("tournament start");
+      socket.on('tournament:start', ({ TournamentGame }) => {
+        console.log('tournament start');
         console.log(TournamentGame.players);
         let id = TournamentGame.players.findIndex(
           (ele) => ele != null && ele.user.id == credential.loginUserId
         );
         if (id > -1 && !TournamentGame.players[id].fold) {
           setMySeat(id);
-          socket.emit("tournament:showMyCards", match.params.room, ({ cards }) => {
+          socket.emit('tournament:showMyCards', match.params.room, ({ cards }) => {
             setTable((table) => {
               const players = JSON.parse(JSON.stringify(table.players));
               console.log(cards);
@@ -353,7 +311,7 @@ const TournamentGamesC = ({
               console.log(players);
               return {
                 ...table,
-                players,
+                players
               };
             });
           });
@@ -362,8 +320,8 @@ const TournamentGamesC = ({
 
         setProgress(100);
       });
-      socket.on("tournament:turn", ({ position, time, amount }) => {
-        console.log("tournament:turn");
+      socket.on('tournament:turn', ({ position, time, amount }) => {
+        console.log('tournament:turn');
         setTable((table) => {
           const newPlayers = table.players.map((ele) => {
             if (ele != null) {
@@ -383,14 +341,14 @@ const TournamentGamesC = ({
           setProgress((table.turnTime * 1000 - time) / (table.turnTime * 10));
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
       socket.on(
-        "tournament:bet",
+        'tournament:bet',
         ({ position, bet, balance, fold, allIn, stand, pot, raise, call }) => {
-          console.log("tournament:bet");
+          console.log('tournament:bet');
           console.log({
             position,
             bet,
@@ -400,7 +358,7 @@ const TournamentGamesC = ({
             stand,
             pot,
             raise,
-            call,
+            call
           });
           setTable((table) => {
             const newPlayers = JSON.parse(JSON.stringify(table.players));
@@ -416,27 +374,27 @@ const TournamentGamesC = ({
             console.log(newPlayers[position]);
             return {
               ...table,
-              players: newPlayers,
+              players: newPlayers
             };
           });
           setEventPositions([position]);
         }
       );
-      socket.on("tournament:stand", ({ position }) => {
+      socket.on('tournament:stand', ({ position }) => {
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position].stand = 1;
-          console.log("tournament:stand");
+          console.log('tournament:stand');
           console.log(position);
           console.log(newPlayers);
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
         setEventPositions([position]);
       });
-      socket.on("tournament:card", ({ tableCards, pot }) => {
+      socket.on('tournament:card', ({ tableCards, pot }) => {
         console.log(tableCards);
         setTimeout(() => {
           setEventPositions([]);
@@ -455,49 +413,49 @@ const TournamentGamesC = ({
             ...table,
             tableCards,
             pot,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("tournament:open", (TournamentGame) => {
-        console.log("open");
+      socket.on('tournament:open', (TournamentGame) => {
+        console.log('open');
         setTable(TournamentGame);
       });
-      socket.on("tournament:result", (TournamentGame, status0, status1) => {
-        console.log("result");
+      socket.on('tournament:result', (TournamentGame, status0, status1) => {
+        console.log('result');
         setTable(TournamentGame);
         setWinnerText(status0);
         setResultText(status1);
       });
 
-      socket.on("tournament:closed", () => {
-        console.log("tournament:closed");
-        history.push("/lobby");
+      socket.on('tournament:closed', () => {
+        console.log('tournament:closed');
+        history.push('/lobby');
       });
-      socket.on("tournament:sit", ({ position }) => {
+      socket.on('tournament:sit', ({ position }) => {
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position].stand = false;
-          console.log("tournament:sit");
+          console.log('tournament:sit');
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("tournament:leave", ({ position }) => {
+      socket.on('tournament:leave', ({ position }) => {
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position] = null;
-          console.log("tournament:leave");
+          console.log('tournament:leave');
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("tournament:third", (positions) => {
-        console.log("tournament:third");
+      socket.on('tournament:third', (positions) => {
+        console.log('tournament:third');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
             if (table.players[positions[i]].user.id == credential.loginUserId) {
@@ -506,12 +464,12 @@ const TournamentGamesC = ({
             table.players[positions[i]] = null;
           }
           return {
-            ...table,
+            ...table
           };
         });
       });
-      socket.on("tournament:second", (positions) => {
-        console.log("tournament:second");
+      socket.on('tournament:second', (positions) => {
+        console.log('tournament:second');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
             if (table.players[positions[i]].user.id == credential.loginUserId) {
@@ -520,27 +478,27 @@ const TournamentGamesC = ({
             table.players[positions[i]] = null;
           }
           return {
-            ...table,
+            ...table
           };
         });
       });
-      socket.on("tournament:first", (position) => {
-        console.log("tournament:first");
+      socket.on('tournament:first', (position) => {
+        console.log('tournament:first');
         setClosed(true);
         setTable((table) => {
           if (table.players[position].user.id == credential.loginUserId) {
             setPlace(1);
           }
           return {
-            ...table,
+            ...table
           };
         });
         setTimeout(() => {
-          history.push("/lobby");
+          history.push('/lobby');
         }, 30000);
       });
-      socket.on("tournament:playersOut", (positions) => {
-        console.log("tournament:out");
+      socket.on('tournament:playersOut', (positions) => {
+        console.log('tournament:out');
         setTable((table) => {
           const newPlayers = table.players.map((ele) => {
             return ele;
@@ -552,21 +510,21 @@ const TournamentGamesC = ({
           console.log(newPlayers);
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("tournament:ready", ({ time }) => {
+      socket.on('tournament:ready', ({ time }) => {
         console.log(time);
         setTable((table) => {
           return {
             ...table,
             playing: true,
-            ready: time,
+            ready: time
           };
         });
       });
-      socket.on("chat:receive", (message) => {
+      socket.on('chat:receive', (message) => {
         setMessageList((list) => {
           return [...list, message];
         });
@@ -587,15 +545,15 @@ const TournamentGamesC = ({
       <div className={classes.root}>
         <Drawer
           variant="persistent"
-          anchor={"left"}
+          anchor={'left'}
           open={chatOpen}
           onClose={() => setChatOpen(!chatOpen)}
           classes={{
-            paper: classes.drawerPaper,
+            paper: classes.drawerPaper
           }}
           className={classes.drawer}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true // Better open performance on mobile.
           }}
         >
           {gameChat}
@@ -605,13 +563,13 @@ const TournamentGamesC = ({
             onClick={() => setChatOpen(!chatOpen)}
             color="tumblr"
             style={{
-              position: "absolute",
-              right: "-31px",
-              borderTopRightRadius: "10px",
-              borderBottomRightRadius: "10px",
-              borderTopLeftRadius: "0px",
-              borderBottomLeftRadius: "0px",
-              padding: "4px",
+              position: 'absolute',
+              right: '-31px',
+              borderTopRightRadius: '10px',
+              borderBottomRightRadius: '10px',
+              borderTopLeftRadius: '0px',
+              borderBottomLeftRadius: '0px',
+              padding: '4px'
             }}
           >
             <AiFillWechat />
@@ -622,16 +580,13 @@ const TournamentGamesC = ({
           className={clsx(
             classes.content,
             {
-              [classes.contentShift]: chatOpen,
+              [classes.contentShift]: chatOpen
             },
             classes[`table_${table.tableSize}`]
           )}
         >
           <div className={classes.menu_bar}>
-            <Button
-              justIcon
-              onClick={(event) => setMainMenu(event.currentTarget)}
-            >
+            <Button justIcon onClick={(event) => setMainMenu(event.currentTarget)}>
               <MdMenu />
             </Button>
             <Menu
@@ -647,23 +602,20 @@ const TournamentGamesC = ({
             </Menu>
             <div className={classes.balance_pad}>
               <span>
-                Balance : {showDot(credential.loginUserPivx)}{" "}
-                <small>satoshi</small>
+                Balance : {showDot(credential.loginUserPivx)} <small>satoshi</small>
               </span>
-              {table &&
-              table.players[mySeat] &&
-              table.players[mySeat].balance ? (
+              {table && table.players[mySeat] && table.players[mySeat].balance ? (
                 <span>
                   In Play : {showDot(table.buyIn)} <small>satoshi</small>
                 </span>
               ) : (
-                ""
+                ''
               )}
             </div>
           </div>
           <div className={classes.title_bar}>
             <span onClick={() => setInfoModal(true)}>{table.name}</span>
-          </div>{" "}
+          </div>{' '}
           <div className={classes.table_pad}>
             {table
               ? table.players.map((ele, key) => {
@@ -673,32 +625,26 @@ const TournamentGamesC = ({
                         key={key}
                         className={clsx(
                           {
-                            "right-hand":
-                              key < Math.ceil(table.tableSize / 2) && key != 0,
-                            stand: ele != null && ele.stand,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            stand: ele != null && ele.stand
                           },
-                          "users-on-board"
+                          'users-on-board'
                         )}
                       >
-                        <Button
-                          color="success"
-                          className="user-avatar"
-                          justIcon
-                          round
-                        >
+                        <Button color="success" className="user-avatar" justIcon round>
                           +
                         </Button>
                         {eventPositions.includes(key) ? (
                           <div
                             className={clsx(
                               classes.eventPlayer,
-                              "animate__animated animate__fadeOutUp animate__slow"
+                              'animate__animated animate__fadeOutUp animate__slow'
                             )}
                           >
                             Out
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </div>
                     );
@@ -708,11 +654,10 @@ const TournamentGamesC = ({
                         key={key}
                         className={clsx(
                           {
-                            "right-hand":
-                              key < Math.ceil(table.tableSize / 2) && key != 0,
-                            stand: ele != null && ele.stand,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            stand: ele != null && ele.stand
                           },
-                          "users-on-board"
+                          'users-on-board'
                         )}
                         onClick={(event) => {
                           if (key == mySeat) setStandMenu(event.currentTarget);
@@ -728,70 +673,50 @@ const TournamentGamesC = ({
                               </div>
                             ))}
                           </div>
-                          <div className="chips-amount total">
-                            {ele.bet > 0 ? ele.bet : ""}
-                          </div>
+                          <div className="chips-amount total">{ele.bet > 0 ? ele.bet : ''}</div>
                         </div>
 
                         {ele.fold == false && ele.cards != null ? (
                           ele.win ? (
                             <div className="player-cards animate__animated animate__heartBeat animate__repeat-3 animate__slower">
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[0] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[0] + ''), 'choosen-card')}
                               </div>
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[1] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[1] + ''), 'choosen-card')}
                               </div>
                             </div>
                           ) : (
                             <div className="player-cards animate__animated animate__fadeInUp">
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[0] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[0] + ''), 'choosen-card')}
                               </div>
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[1] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[1] + ''), 'choosen-card')}
                               </div>
                             </div>
                           )
                         ) : (
-                          ""
+                          ''
                         )}
 
                         <div className="user-info">
                           <span>{ele.user.username}</span>
-                          <span className={classes.balance}>
-                            {" "}
-                            {showKilo(ele.balance)}
-                          </span>
+                          <span className={classes.balance}> {showKilo(ele.balance)}</span>
                         </div>
                         {ele.turn ? (
                           <div className={classes.progressBar}>
-                            <LinearProgress
-                              variant="determinate"
-                              value={progress}
-                            />
+                            <LinearProgress variant="determinate" value={progress} />
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
 
                         {ele.avatar ? (
                           <img
                             src={`${apiConfig.api}/uploads/avatars/${ele.avatar}`}
                             alt="A"
-                            className={clsx(classes.userAvatar, "user-avatar")}
+                            className={clsx(classes.userAvatar, 'user-avatar')}
                           />
                         ) : (
                           <Avatar
@@ -810,7 +735,7 @@ const TournamentGamesC = ({
                             round="80px"
                           />
                         ) : (
-                          ""
+                          ''
                         )}
                         {
                           //   ele.user.id === credential.loginUserId ? (
@@ -829,42 +754,42 @@ const TournamentGamesC = ({
                           <div
                             className={clsx(
                               classes.eventPlayer,
-                              "animate__animated animate__fadeOutUp animate__slow"
+                              'animate__animated animate__fadeOutUp animate__slow'
                             )}
                           >
                             {ele.stand
-                              ? "Stand"
+                              ? 'Stand'
                               : ele.fold
-                              ? "Fold"
+                              ? 'Fold'
                               : ele.allIn
-                              ? "All In"
+                              ? 'All In'
                               : ele.raise
-                              ? "Raise"
+                              ? 'Raise'
                               : ele.call
-                              ? "Call"
-                              : "Check"}
+                              ? 'Call'
+                              : 'Check'}
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                         {ele.win ? (
                           <div
                             className={clsx(
                               classes.eventPlayer,
                               classes.winEvent,
-                              "animate__animated animate__fadeOutUp  animate__slower"
+                              'animate__animated animate__fadeOutUp  animate__slower'
                             )}
                           >
                             {ranks[ele.rank]}
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </div>
                     );
                   }
                 })
-              : ""}
+              : ''}
             <Menu
               id="simple-menu"
               anchorEl={standMenu}
@@ -878,8 +803,8 @@ const TournamentGamesC = ({
                 mySeat > -1 &&
                 table.players[mySeat] != null &&
                 table.players[mySeat].stand
-                  ? "Sit"
-                  : "Stand"}
+                  ? 'Sit'
+                  : 'Stand'}
               </MenuItem>
               <MenuItem onClick={leaveTable}>Leave</MenuItem>
             </Menu>
@@ -890,18 +815,18 @@ const TournamentGamesC = ({
                 {resultText}
               </React.Fragment>
             </div>
-            <div className={classes.table_cards + " table-cards"}>
+            <div className={classes.table_cards + ' table-cards'}>
               <div className="card-center-possition">
                 {table.tableCards
                   ? table.tableCards.map((ele, key) => (
                       <React.Fragment key={key}>
                         {getCards(
-                          getCardSrc(ele + ""),
-                          "card-size animate__animated animate__flipInY"
+                          getCardSrc(ele + ''),
+                          'card-size animate__animated animate__flipInY'
                         )}
                       </React.Fragment>
                     ))
-                  : ""}
+                  : ''}
               </div>
               <div className="chips-pad">
                 <div className="chip-stacks">
@@ -913,24 +838,14 @@ const TournamentGamesC = ({
                     </div>
                   ))}
                 </div>
-                <div className="chips-amount total">
-                  {table.pot > 0 ? table.pot : ""}
-                </div>
+                <div className="chips-amount total">{table.pot > 0 ? table.pot : ''}</div>
               </div>
             </div>
             <Hidden xsDown>
-              <img
-                className={classes.background}
-                src={PokerTable}
-                alt="Table"
-              />
+              <img className={classes.background} src={PokerTable} alt="Table" />
             </Hidden>
             <Hidden smUp>
-              <img
-                className={classes.background}
-                src={PokerTableMobile}
-                alt="Table"
-              />
+              <img className={classes.background} src={PokerTableMobile} alt="Table" />
             </Hidden>
           </div>
           {table &&
@@ -940,30 +855,28 @@ const TournamentGamesC = ({
           !table.players[mySeat].stand ? (
             table.players[mySeat].turn ? (
               <div className={classes.control_pad}>
-                <Button color="warning" onClick={() => bet("fold")}>
+                <Button color="warning" onClick={() => bet('fold')}>
                   Fold
                 </Button>
-                {callStatus == "allIn" ? (
-                  <Button color="danger" onClick={() => bet("allIn")}>
+                {callStatus == 'allIn' ? (
+                  <Button color="danger" onClick={() => bet('allIn')}>
                     All In
                   </Button>
-                ) : callStatus == "allIn_minRaise" ? (
+                ) : callStatus == 'allIn_minRaise' ? (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
+                    <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0
-                        ? "Call " + (call - table.players[mySeat].bet)
-                        : "Check"}
+                        ? 'Call ' + (call - table.players[mySeat].bet)
+                        : 'Check'}
                     </Button>
-                    <Button color="danger" onClick={() => bet("allIn")}>
+                    <Button color="danger" onClick={() => bet('allIn')}>
                       All In
                     </Button>
                   </React.Fragment>
-                ) : callStatus == "allIn_maxRaise" ? (
+                ) : callStatus == 'allIn_maxRaise' ? (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
-                      {call - table.players[mySeat].bet > 0
-                        ? "Call " + call
-                        : "Check"}
+                    <Button color="info" onClick={() => bet('call', call)}>
+                      {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
                     </Button>
                     <Button
                       justIcon
@@ -982,7 +895,7 @@ const TournamentGamesC = ({
                       getAriaValueText={(val) => val}
                       min={minRaise}
                       max={maxRaise}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.slider}
                     />
                     <Button
@@ -996,24 +909,19 @@ const TournamentGamesC = ({
                     </Button>
 
                     {raise == maxRaise ? (
-                      <Button color="danger" onClick={() => bet("allIn")}>
+                      <Button color="danger" onClick={() => bet('allIn')}>
                         All In
                       </Button>
                     ) : (
-                      <Button
-                        color="primary"
-                        onClick={() => bet("call", raise)}
-                      >
+                      <Button color="primary" onClick={() => bet('call', raise)}>
                         Raise ({raise})
                       </Button>
                     )}
                   </React.Fragment>
                 ) : (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
-                      {call - table.players[mySeat].bet > 0
-                        ? "Call " + call
-                        : "Check"}
+                    <Button color="info" onClick={() => bet('call', call)}>
+                      {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
                     </Button>
                     <Button
                       justIcon
@@ -1032,7 +940,7 @@ const TournamentGamesC = ({
                       getAriaValueText={(val) => val}
                       min={minRaise}
                       max={maxRaise}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.slider}
                     />
                     <Button
@@ -1044,7 +952,7 @@ const TournamentGamesC = ({
                     >
                       <AiOutlinePlus />
                     </Button>
-                    <Button color="primary" onClick={() => bet("call", raise)}>
+                    <Button color="primary" onClick={() => bet('call', raise)}>
                       Raise ({raise})
                     </Button>
                   </React.Fragment>
@@ -1064,7 +972,7 @@ const TournamentGamesC = ({
               </div>
             )
           ) : (
-            ""
+            ''
           )}
           {!chatOpen ? (
             <Button
@@ -1072,19 +980,19 @@ const TournamentGamesC = ({
               onClick={() => setChatOpen(true)}
               color="tumblr"
               style={{
-                position: "absolute",
-                left: "0px",
-                borderTopRightRadius: "10px",
-                borderBottomRightRadius: "10px",
-                borderTopLeftRadius: "0px",
-                borderBottomLeftRadius: "0px",
-                padding: "4px",
+                position: 'absolute',
+                left: '0px',
+                borderTopRightRadius: '10px',
+                borderBottomRightRadius: '10px',
+                borderTopLeftRadius: '0px',
+                borderBottomLeftRadius: '0px',
+                padding: '4px'
               }}
             >
               <AiFillWechat />
             </Button>
           ) : (
-            ""
+            ''
           )}
         </div>
 
@@ -1096,7 +1004,7 @@ const TournamentGamesC = ({
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
-              timeout: 500,
+              timeout: 500
             }}
             className={classes.modal}
           >
@@ -1109,7 +1017,7 @@ const TournamentGamesC = ({
                     round
                     justIcon
                     className={classes.modal_close}
-                    onClick={() => history.push("/lobby")}
+                    onClick={() => history.push('/lobby')}
                   >
                     <AiOutlineLogout />
                   </Button>
@@ -1117,17 +1025,17 @@ const TournamentGamesC = ({
                 <TextField
                   id="standard-full-width"
                   label="Table Name"
-                  style={{ margin: 8, fontSize: "30px" }}
+                  style={{ margin: 8, fontSize: '30px' }}
                   helperText="Max Length is 10 character"
                   fullWidth
                   margin="normal"
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   InputProps={{
-                    style: { fontSize: "30px" },
+                    style: { fontSize: '30px' },
                     value: table.name,
-                    readOnly: true,
+                    readOnly: true
                   }}
                 />
                 <Grid container spacing={3}>
@@ -1138,15 +1046,15 @@ const TournamentGamesC = ({
                     <TextField
                       id="table-size"
                       label="Players"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.players.length + "/" + table.tableSize,
-                        readOnly: true,
+                        value: table.players.length + '/' + table.tableSize,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1159,17 +1067,17 @@ const TournamentGamesC = ({
                     <TextField
                       id="turn-time"
                       label="Turn Time"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showTurnTime(table.turnTime),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1181,17 +1089,17 @@ const TournamentGamesC = ({
                     <TextField
                       id="starting-stack"
                       label="Starting Stack"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.startingStack,
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1203,17 +1111,17 @@ const TournamentGamesC = ({
                     <TextField
                       id="limit"
                       label="Limit"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.limit ? "Pot Limit" : "No Limit",
-                        readOnly: true,
+                        value: table.limit ? 'Pot Limit' : 'No Limit',
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1225,42 +1133,29 @@ const TournamentGamesC = ({
                     <TextField
                       id="blind-schedule"
                       label="Blind Schedule"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: [
-                          "Very Slow",
-                          "Slow",
-                          "Normal",
-                          "Fast",
-                          "Very Fast",
-                        ][table.blindSchedule],
-                        readOnly: true,
+                        value: ['Very Slow', 'Slow', 'Normal', 'Fast', 'Very Fast'][
+                          table.blindSchedule
+                        ],
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={3}>
-                  <TableContainer
-                    component={Paper}
-                    className={classes.tableContainer}nament
-                  >
-                    <Table
-                      className={classes.table}
-                      size="small"
-                      aria-label="a dense table"
-                    >
+                  <TableContainer component={Paper} className={classes.tableContainer} nament>
+                    <Table className={classes.table} size="small" aria-label="a dense table">
                       <TableHead>
                         <StyledTableRow>
                           <StyledTableCell>Blind</StyledTableCell>
-                          <StyledTableCell align="right">
-                            Duration
-                          </StyledTableCell>
+                          <StyledTableCell align="right">Duration</StyledTableCell>
                         </StyledTableRow>
                       </TableHead>
                       <TableBody>
@@ -1269,9 +1164,7 @@ const TournamentGamesC = ({
                             <StyledTableCell component="th" scope="row">
                               {showKilo(row.blinds)}
                             </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {row.duration}
-                            </StyledTableCell>
+                            <StyledTableCell align="right">{row.duration}</StyledTableCell>
                           </StyledTableRow>
                         ))}
                       </TableBody>
@@ -1291,11 +1184,11 @@ const TournamentGamesC = ({
                       type="number"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.buyIn,
-                        readOnly: true,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1306,9 +1199,7 @@ const TournamentGamesC = ({
                     Prize Pool:
                   </Grid>
                   <Grid item xs={8} className={classes.modal_field}>
-                    {showDot(
-                      table.firstPlace + table.secondPlace + table.thirdPlace
-                    )}
+                    {showDot(table.firstPlace + table.secondPlace + table.thirdPlace)}
                   </Grid>
                 </Grid>
                 <Grid container spacing={5}>
@@ -1328,13 +1219,13 @@ const TournamentGamesC = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.firstPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1350,13 +1241,13 @@ const TournamentGamesC = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.secondPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1372,13 +1263,13 @@ const TournamentGamesC = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.thirdPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1396,33 +1287,25 @@ const TournamentGamesC = ({
                           autoComplete="current-password"
                           InputProps={{
                             value: password,
-                            onChange: (e) => setPassword(e.target.value),
+                            onChange: (e) => setPassword(e.target.value)
                           }}
-                        />{" "}
+                        />{' '}
                       </FormControl>
                     </Grid>
                   </Grid>
                 ) : (
-                  ""
+                  ''
                 )}
 
                 <Grid container spacing={3} className="mt-3">
                   {table.players.find((ele) =>
                     ele != null ? ele.user.id === credential.loginUserId : false
                   ) ? (
-                    <Button
-                      color="primary"
-                      style={{ margin: "auto auto" }}
-                      onClick={joinTable}
-                    >
+                    <Button color="primary" style={{ margin: 'auto auto' }} onClick={joinTable}>
                       Unregister
                     </Button>
-                  ) :  (
-                    <Button
-                      color="primary"
-                      style={{ margin: "auto auto" }}
-                      onClick={joinTable}
-                    >
+                  ) : (
+                    <Button color="primary" style={{ margin: 'auto auto' }} onClick={joinTable}>
                       Register
                     </Button>
                   )}
@@ -1431,7 +1314,7 @@ const TournamentGamesC = ({
             </Fade>
           </Modal>
         ) : (
-          ""
+          ''
         )}
         {table ? (
           <Modal
@@ -1442,7 +1325,7 @@ const TournamentGamesC = ({
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
-              timeout: 500,
+              timeout: 500
             }}
             className={classes.modal}
           >
@@ -1469,15 +1352,15 @@ const TournamentGamesC = ({
                     <TextField
                       id="table-size"
                       label="Players"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.creator.username,
-                        readOnly: true,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1490,15 +1373,15 @@ const TournamentGamesC = ({
                     <TextField
                       id="table-size"
                       label="Players"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.players.length + "/" + table.tableSize,
-                        readOnly: true,
+                        value: table.players.length + '/' + table.tableSize,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1511,17 +1394,17 @@ const TournamentGamesC = ({
                     <TextField
                       id="turn-time"
                       label="Turn Time"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showTurnTime(table.turnTime),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1533,17 +1416,17 @@ const TournamentGamesC = ({
                     <TextField
                       id="starting-stack"
                       label="Starting Stack"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.startingStack,
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1555,17 +1438,17 @@ const TournamentGamesC = ({
                     <TextField
                       id="limit"
                       label="Limit"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.limit ? "Pot Limit" : "No Limit",
-                        readOnly: true,
+                        value: table.limit ? 'Pot Limit' : 'No Limit',
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1577,42 +1460,29 @@ const TournamentGamesC = ({
                     <TextField
                       id="blind-schedule"
                       label="Blind Schedule"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: [
-                          "Very Slow",
-                          "Slow",
-                          "Normal",
-                          "Fast",
-                          "Very Fast",
-                        ][table.blindSchedule],
-                        readOnly: true,
+                        value: ['Very Slow', 'Slow', 'Normal', 'Fast', 'Very Fast'][
+                          table.blindSchedule
+                        ],
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={3}>
-                  <TableContainer
-                    component={Paper}
-                    className={classes.tableContainer}
-                  >
-                    <Table
-                      className={classes.table}
-                      size="small"
-                      aria-label="a dense table"
-                    >
+                  <TableContainer component={Paper} className={classes.tableContainer}>
+                    <Table className={classes.table} size="small" aria-label="a dense table">
                       <TableHead>
                         <StyledTableRow>
                           <StyledTableCell>Blind</StyledTableCell>
-                          <StyledTableCell align="right">
-                            Duration
-                          </StyledTableCell>
+                          <StyledTableCell align="right">Duration</StyledTableCell>
                         </StyledTableRow>
                       </TableHead>
                       <TableBody>
@@ -1621,9 +1491,7 @@ const TournamentGamesC = ({
                             <StyledTableCell component="th" scope="row">
                               {showKilo(row.blinds)}
                             </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {row.duration}
-                            </StyledTableCell>
+                            <StyledTableCell align="right">{row.duration}</StyledTableCell>
                           </StyledTableRow>
                         ))}
                       </TableBody>
@@ -1643,11 +1511,11 @@ const TournamentGamesC = ({
                       type="number"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.buyIn,
-                        readOnly: true,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1658,9 +1526,7 @@ const TournamentGamesC = ({
                     Prize Pool:
                   </Grid>
                   <Grid item xs={8} className={classes.modal_field}>
-                    {showDot(
-                      table.firstPlace + table.secondPlace + table.thirdPlace
-                    )}
+                    {showDot(table.firstPlace + table.secondPlace + table.thirdPlace)}
                   </Grid>
                 </Grid>
                 <Grid container spacing={5}>
@@ -1680,13 +1546,13 @@ const TournamentGamesC = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.firstPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1702,13 +1568,13 @@ const TournamentGamesC = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.secondPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1724,13 +1590,13 @@ const TournamentGamesC = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.thirdPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
                 <Grid container spacing={3}>
@@ -1745,28 +1611,28 @@ const TournamentGamesC = ({
             </Fade>
           </Modal>
         ) : (
-          ""
+          ''
         )}
         {table.ready > 0 ? (
           <Backdrop className={classes.backdrop} open={table.ready > 0}>
             <CircularProgress color="primary" />
-            <div style={{ marginLeft: "20px" }}>
+            <div style={{ marginLeft: '20px' }}>
               {Math.floor(table.ready / 60) > 1
-                ? Math.floor(table.ready / 60) + "mins"
+                ? Math.floor(table.ready / 60) + 'mins'
                 : Math.floor(table.ready / 60) > 0
-                ? Math.floor(table.ready / 60) + "min"
-                : ""}{" "}
-              {(table.ready % 60) + " secs to ready game!"}
+                ? Math.floor(table.ready / 60) + 'min'
+                : ''}{' '}
+              {(table.ready % 60) + ' secs to ready game!'}
             </div>
           </Backdrop>
         ) : (
-          ""
+          ''
         )}
         {place > 0 ? (
           <Backdrop
             className={classes.backdrop}
             open={place > 0}
-            onClick={() => history.push("/lobby")}
+            onClick={() => history.push('/lobby')}
           >
             <div class="firework-1"></div>
             <div class="firework-2"></div>
@@ -1784,20 +1650,19 @@ const TournamentGamesC = ({
             <div class="firework-14"></div>
             <div class="firework-15"></div>
             <div class="congratulation">
-              Congratulations! You take{" "}
-              {place == 1 ? "1st" : place == 2 ? "2nd" : "3rd"} place.
+              Congratulations! You take {place == 1 ? '1st' : place == 2 ? '2nd' : '3rd'} place.
             </div>
           </Backdrop>
         ) : closed ? (
           <Backdrop
             className={classes.backdrop}
             open={closed}
-            onClick={() => history.push("/lobby")}
+            onClick={() => history.push('/lobby')}
           >
             <div>Closed</div>
           </Backdrop>
         ) : (
-          ""
+          ''
         )}
       </div>
     </div>
@@ -1812,12 +1677,10 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
       PIVXChange: global.Actions.LoginAction.PIVXChange,
-      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess,
+      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess
     },
     dispatch
   );
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(TournamentGamesC)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TournamentGamesC));

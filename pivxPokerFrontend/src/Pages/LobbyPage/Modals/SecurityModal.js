@@ -20,11 +20,11 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
   const postPassword = async () => {
-    if (newPassword != confirmPassword) {
+    if (newPassword !== confirmPassword) {
       handleToast("Password doesn't match!");
       return;
     }
-    if (newPassword == "") {
+    if (newPassword === "") {
       handleToast("Please input the new password!");
       return;
     }
