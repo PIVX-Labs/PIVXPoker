@@ -1,8 +1,6 @@
 const cron = require('node-cron');
 const TorIp = require('../models/torIp');
 
-
-
 const isValidIP = (ip) => {
   // Regular expression for IPv4 address
   const ipv4Regex =
@@ -22,27 +20,18 @@ const insertTorIp = async (ip) => {
       ip
     });
     await torIp.save();
-  } catch (error) {
-    console.log('error', ip);
-  }
+  } catch (error) {}
 };
 
 const task = async () => {
   const res = await fetch('https://www.dan.me.uk/torlist/?full');
   const data = await res.text();
   const ips = data.split('\n');
-  console.log('ipsLength', ips.length);
   ips.forEach((ip) => {
     insertTorIp(ip);
   });
 };
 
-// task();
-
-
-// cron.schedule('0 0 * * *', async function () {
-//   const res = await fetch('https://www.dan.me.uk/torlist/?full');
-//   const data = await res.json();
-//   console.log('---------------------');
-//   console.log('running a task every 15 seconds', data);
-// });
+cron.schedule('0 0 * * *', async function () {
+  task();
+});
