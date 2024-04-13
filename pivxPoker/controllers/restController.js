@@ -1,16 +1,19 @@
 const User = require('../models/user');
+const TorIp = require('../models/torIp');
 const Visited = require('../models/visited');
+const FlagLog = require('../models/flagLog');
 
 const jwtDecode = require('jwt-decode');
 const { body, validationResult } = require('express-validator');
 const { getNewAddress, getNewShieldAddress } = require('../utils/pivx');
 const { createToken, hashPassword, verifyPassword } = require('../utils/authentication');
+const { logFlag } = require('../services/flagLog');
 
 /**
  * Occures when sign up happens
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @returns
  */
 exports.signup = async (req, res) => {
   const result = validationResult(req);
@@ -24,14 +27,14 @@ exports.signup = async (req, res) => {
 
     const hashedPassword = await hashPassword(req.body.password);
 
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
 
     const userData = {
       username: username.toLowerCase().trim(),
       password: hashedPassword
     };
 
-    userData.ip = ip
+    userData.ip = ip;
 
     const existingUsername = await User.findOne({
       username: userData.username
@@ -49,7 +52,7 @@ exports.signup = async (req, res) => {
     if (respond && respond.error == null) {
       userData.address = respond.result;
 
-      const respondShield = await getNewShieldAddress()
+      const respondShield = await getNewShieldAddress();
       if (respondShield && respondShield.error == null) {
         userData.shieldaddress = respondShield.result;
       }
@@ -66,11 +69,27 @@ exports.signup = async (req, res) => {
       const savedUser = await newUser.save();
 
       if (savedUser) {
+        let updatedIp = ip;
+        if (updatedIp.substr(0, 7) == '::ffff:') {
+          updatedIp = updatedIp.substr(7);
+        }
+
+        await logFlag(updatedIp, savedUser.id, 'Sign Up');
         const token = createToken(savedUser);
         const decodedToken = jwtDecode(token);
         const expiresAt = decodedToken.exp;
 
-        const { username, role, id, ip, created, pivx, address, my_address,shieldaddress, myshieldaddress } = savedUser;
+        const {
+          username,
+          role,
+          id,
+          created,
+          pivx,
+          address,
+          my_address,
+          shieldaddress,
+          myshieldaddress
+        } = savedUser;
         const userInfo = {
           username,
           role,
@@ -111,9 +130,9 @@ exports.signup = async (req, res) => {
 
 /**
  * Validates username and password information
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @returns
  */
 exports.authenticate = async (req, res) => {
   const result = validationResult(req);
@@ -136,6 +155,13 @@ exports.authenticate = async (req, res) => {
     const passwordValid = await verifyPassword(password, user.password);
 
     if (passwordValid) {
+      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+      if (ip.substr(0, 7) == '::ffff:') {
+        ip = ip.substr(7);
+      }
+
+      await logFlag(ip, user.id, 'Sign In');
+
       if (!user.address) {
         const respond = await getNewAddress();
         if (respond && respond.error == null) {
@@ -153,10 +179,24 @@ exports.authenticate = async (req, res) => {
           await user.save();
         }
       }
+
       const token = createToken(user);
       const decodedToken = jwtDecode(token);
       const expiresAt = decodedToken.exp;
-      const { username, role, id, level, created, pivx, address, my_address,shieldaddress, myshieldaddress, profilePhoto, admin } = user;
+      const {
+        username,
+        role,
+        id,
+        level,
+        created,
+        pivx,
+        address,
+        my_address,
+        shieldaddress,
+        myshieldaddress,
+        profilePhoto,
+        admin
+      } = user;
       const userInfo = {
         username,
         role,
@@ -166,9 +206,10 @@ exports.authenticate = async (req, res) => {
         pivx,
         address,
         my_address,
-        shieldaddress, 
+        shieldaddress,
         myshieldaddress,
-        profilePhoto,admin
+        profilePhoto,
+        admin
       };
       const visited = new Visited();
       visited.user = user._id;
@@ -195,10 +236,10 @@ exports.authenticate = async (req, res) => {
 
 /**
  * Profile information and changes to profiles
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
  */
 exports.profile = async (req, res, next) => {
   const user = await User.findById(req.user.id);
@@ -229,10 +270,10 @@ exports.profile = async (req, res, next) => {
 
 /**
  * Password changes
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
  */
 exports.changePassword = async (req, res, next) => {
   const password = req.body.password;
@@ -250,11 +291,11 @@ exports.changePassword = async (req, res, next) => {
 };
 
 /**
- * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- * @returns 
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
  */
 exports.getBonus = async (req, res, next) => {
   try {
