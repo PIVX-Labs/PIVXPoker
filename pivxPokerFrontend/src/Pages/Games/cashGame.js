@@ -1,14 +1,13 @@
 import { connect } from 'react-redux';
 import React, { useRef } from 'react';
 import { withRouter } from 'react-router-dom';
-import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Hidden from '@material-ui/core/Hidden';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Hidden from '@mui/material/Hidden';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import io from 'socket.io-client';
 import Button from '../../Components/Button';
 import PokerTable from '../../images/poker-table.png';
@@ -28,18 +27,17 @@ import '../../css/games.css';
 import { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
 import { getCards, getCardSrc } from '../../Components/cards';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import Chip from '../../Components/Chip';
 import gameStyle from '../../jss/pages/cashGameStyle';
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { Drawer, useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { chips, ranks } from '../../shared/constants';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
 import handleToast, { success } from '../../Components/toast';
 
 const useStyles = makeStyles(gameStyle);
@@ -460,7 +458,6 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
       });
       socket.on('cash:sit', ({ position }) => {
         setTable((table) => {
-          console.log('tabletabletabletable', table);
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position].stand = false;
           console.log('cash:sit');
@@ -514,7 +511,6 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
   useEffect(() => {
     setChatOpen(!status.mobileView);
   }, [status.mobileView]);
-  console.log('table', table);
 
   return (
     <div className="game-page">
@@ -838,7 +834,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                 <div className="chips-amount total">{table.pot > 0 ? table.pot : ''}</div>
               </div>
             </div>
-            <Hidden xsDown>
+            <Hidden smDown>
               <img className={classes.background} src={PokerTable} alt="Table" />
             </Hidden>
             <Hidden smUp>
@@ -999,10 +995,6 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
             open={passwordModal}
             onClose={() => setPasswordModal(!passwordModal)}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500
-            }}
             className={classes.modal}
           >
             <Fade in={passwordModal}>
@@ -1113,10 +1105,6 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
             open={buyInModal}
             onClose={() => setBuyInModal(!buyInModal)}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500
-            }}
             className={classes.modal}
           >
             <Fade in={buyInModal}>
@@ -1214,10 +1202,6 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
             open={infoModal}
             onClose={() => setInfoModal(!infoModal)}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500
-            }}
             className={classes.modal}
           >
             <Fade in={infoModal}>

@@ -1,36 +1,35 @@
-import { useState, useEffect } from "react";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import { AiOutlineClose } from "react-icons/ai";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import handleToast, { success } from "Components/toast";
-import Button from "Components/Button";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import modalStyle from "jss/modalStyle";
+import { useState, useEffect } from 'react';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import { AiOutlineClose } from 'react-icons/ai';
+import { makeStyles } from '@mui/styles';
+import Grid from '@mui/material/Grid';
+import handleToast, { success } from 'Components/toast';
+import Button from 'Components/Button';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import modalStyle from 'jss/modalStyle';
 
 const useStyles = makeStyles(modalStyle);
 
 const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
   const classes = useStyles();
   const { apiConfig, ApiCall } = global;
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState('');
   const postPassword = async () => {
     if (newPassword !== confirmPassword) {
       handleToast("Password doesn't match!");
       return;
     }
-    if (newPassword === "") {
-      handleToast("Please input the new password!");
+    if (newPassword === '') {
+      handleToast('Please input the new password!');
       return;
     }
     const payLoad = {
       password,
-      newPassword,
+      newPassword
     };
     try {
       const response = await ApiCall(
@@ -41,9 +40,9 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
         payLoad
       );
       if (response.status === 200) {
-        setPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
+        setPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
         setSecurityModal(false);
         handleToast(response.data.message, success);
       } else {
@@ -51,13 +50,13 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
       }
     } catch (error) {
       if (error.response) handleToast(error.response.data.error);
-      else handleToast("Request Failed!");
+      else handleToast('Request Failed!');
     }
   };
   const cancelModal = () => {
-    setNewPassword("");
-    setPassword("");
-    setConfirmPassword("");
+    setNewPassword('');
+    setPassword('');
+    setConfirmPassword('');
     setSecurityModal(false);
   };
   return (
@@ -67,23 +66,13 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
       open={securityModal}
       onClose={cancelModal}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
       className={classes.modal}
     >
       <Fade in={securityModal}>
         <div className={classes.small_modal_paper}>
           <h4 className={classes.modal_title}>
             Security
-            <Button
-              simple
-              round
-              justIcon
-              className={classes.modal_close}
-              onClick={cancelModal}
-            >
+            <Button simple round justIcon className={classes.modal_close} onClick={cancelModal}>
               <AiOutlineClose />
             </Button>
           </h4>
@@ -102,12 +91,12 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
                     value: password,
                     onChange: (e) => {
                       setPassword(e.target.value);
-                    },
+                    }
                   }}
-                />{" "}
+                />{' '}
               </FormControl>
             </Grid>
-          </Grid>{" "}
+          </Grid>{' '}
           <Grid container spacing={3}>
             <Grid item xs={4} className={classes.modal_label}>
               New Password:
@@ -121,12 +110,12 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
                   autoComplete=""
                   InputProps={{
                     value: newPassword,
-                    onChange: (e) => setNewPassword(e.target.value),
+                    onChange: (e) => setNewPassword(e.target.value)
                   }}
-                />{" "}
+                />{' '}
               </FormControl>
             </Grid>
-          </Grid>{" "}
+          </Grid>{' '}
           <Grid container spacing={3}>
             <Grid item xs={4} className={classes.modal_label}>
               Confirm Password:
@@ -140,25 +129,17 @@ const SecurityModal = ({ securityModal, setSecurityModal, credential }) => {
                   autoComplete=""
                   InputProps={{
                     value: confirmPassword,
-                    onChange: (e) => setConfirmPassword(e.target.value),
+                    onChange: (e) => setConfirmPassword(e.target.value)
                   }}
-                />{" "}
+                />{' '}
               </FormControl>
             </Grid>
-          </Grid>{" "}
+          </Grid>{' '}
           <Grid container spacing={3} className="mt-3">
-            <Button
-              color="pivx1"
-              style={{ margin: "auto auto" }}
-              onClick={postPassword}
-            >
+            <Button color="pivx1" style={{ margin: 'auto auto' }} onClick={postPassword}>
               OK
             </Button>
-            <Button
-              color="pivx3"
-              style={{ margin: "auto auto" }}
-              onClick={cancelModal}
-            >
+            <Button color="pivx3" style={{ margin: 'auto auto' }} onClick={cancelModal}>
               Cancel
             </Button>
           </Grid>

@@ -1,109 +1,102 @@
-import { connect } from "react-redux";
-import React, {useRef} from "react";
-import { withRouter } from "react-router-dom";
-import Drawer from "@material-ui/core/Drawer";
-import clsx from "clsx";
-import Menu from "@material-ui/core/Menu";
-import { bindActionCreators } from "redux";
-import MenuItem from "@material-ui/core/MenuItem";
-import Hidden from "@material-ui/core/Hidden";
-import Backdrop from "@material-ui/core/Backdrop";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import io from "socket.io-client";
-import { MdMenu } from "react-icons/md";
+import { connect } from 'react-redux';
+import React, { useRef } from 'react';
+import { withRouter } from 'react-router-dom';
+import Drawer from '@mui/material/Drawer';
+import clsx from 'clsx';
+import Menu from '@mui/material/Menu';
+import { bindActionCreators } from 'redux';
+import MenuItem from '@mui/material/MenuItem';
+import Hidden from '@mui/material/Hidden';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
+import io from 'socket.io-client';
+import { MdMenu } from 'react-icons/md';
 
-import Button from "../../Components/Button";
-import PokerTable from "../../images/poker-table.png";
-import PokerTableMobile from "../../images/poker-table-mobile.png";
-import PrettoSlider from "../../Components/PrettoSlider";
+import Button from '../../Components/Button';
+import PokerTable from '../../images/poker-table.png';
+import PokerTableMobile from '../../images/poker-table-mobile.png';
+import PrettoSlider from '../../Components/PrettoSlider';
 import {
   AiFillWechat,
   AiOutlineClose,
   AiOutlineLogout,
   AiOutlinePlus,
-  AiOutlineMinus,
-} from "react-icons/ai";
-import "../../css/games.css";
-import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
-import { getCards, getCardSrc } from "../../Components/cards";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import Chip from "../../Components/Chip";
-import gameStyle from "../../jss/pages/cashGameStyle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { chips, ranks, sitBlindList } from "../../shared/constants";
-import Modal from "@material-ui/core/Modal";
-import Fade from "@material-ui/core/Fade";
-import Grid from "@material-ui/core/Grid";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import Paper from "@material-ui/core/Paper";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+  AiOutlineMinus
+} from 'react-icons/ai';
+import '../../css/games.css';
+import { useEffect, useState } from 'react';
+import Avatar from 'react-avatar';
+import { getCards, getCardSrc } from '../../Components/cards';
+import { makeStyles, withStyles } from '@mui/styles';
+import Chip from '../../Components/Chip';
+import gameStyle from '../../jss/pages/cashGameStyle';
+import { useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { chips, ranks, sitBlindList } from '../../shared/constants';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import Paper from '@mui/material/Paper';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import {
   showKilo,
   showTurnTime,
   showTableSize,
   showDot,
-  showPotChips,
-} from "../../shared/printConfig";
-import handleToast, { success } from "../../Components/toast";
+  showPotChips
+} from '../../shared/printConfig';
+import handleToast, { success } from '../../Components/toast';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white + "!important",
+    color: theme.palette.common.white + '!important'
   },
   body: {
-    fontSize: 14,
-  },
+    fontSize: 14
+  }
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover
+    }
+  }
 }))(TableRow);
 const useStyles = makeStyles(gameStyle);
-const SitGame = ({
-  match,
-  history,
-  status,
-  credential,
-  PIVXChange,
-  LogOutSuccess,
-}) => {
+const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess }) => {
   const classes = useStyles();
   const { apiConfig } = global;
   const theme = useTheme();
   const reference = useRef();
 
-  const lg = useMediaQuery(theme.breakpoints.up("lg"));
-  const md = useMediaQuery(theme.breakpoints.up("md"));
-  const sm = useMediaQuery(theme.breakpoints.up("sm"));
-  const xs = useMediaQuery(theme.breakpoints.up("xs"));
-  const [winnerText, setWinnerText] = useState("");
-  const [resultText, setResultText] = useState("");
+  const lg = useMediaQuery(theme.breakpoints.up('lg'));
+  const md = useMediaQuery(theme.breakpoints.up('md'));
+  const sm = useMediaQuery(theme.breakpoints.up('sm'));
+  const xs = useMediaQuery(theme.breakpoints.up('xs'));
+  const [winnerText, setWinnerText] = useState('');
+  const [resultText, setResultText] = useState('');
   const [passwordModal, setPasswordModal] = useState(false);
-  const [password, setPassword] = useState("");
-  const [seat, setSeat] = useState("");
-  const [socket, setSocket] = useState("");
+  const [password, setPassword] = useState('');
+  const [seat, setSeat] = useState('');
+  const [socket, setSocket] = useState('');
   const [chatOpen, setChatOpen] = useState(!status.mobileView);
-  let [message, setMessage] = useState("");
+  let [message, setMessage] = useState('');
   let [messageList, setMessageList] = useState([]);
-  const [table, setTable] = useState("");
+  const [table, setTable] = useState('');
   const [mySeat, setMySeat] = useState(-1);
   const [progress, setProgress] = useState(100);
   const [call, setCall] = useState(0);
-  const [callStatus, setCallStatus] = useState("");
+  const [callStatus, setCallStatus] = useState('');
   const [raise, setRaise] = useState(0);
   const [minRaise, setMinRaise] = useState(0);
   const [maxRaise, setMaxRaise] = useState(0);
@@ -114,39 +107,39 @@ const SitGame = ({
   const [place, setPlace] = useState(0);
   const [closed, setClosed] = useState(false);
   const gotoLobby = () => {
-    history.push("/lobby");
+    history.push('/lobby');
   };
   const logout = () => {
-    socket.emit("sit:leave", match.params.room, (res) => {
+    socket.emit('sit:leave', match.params.room, (res) => {
       if (res == true) {
         LogOutSuccess();
-        history.push("/");
+        history.push('/');
       }
     });
   };
   const changeStand = () => {
     setStandMenu(null);
-    socket.emit("sit:stand", match.params.room, (res) => {
+    socket.emit('sit:stand', match.params.room, (res) => {
       setTable((table) => {
         const players = table.players.map((ele) => ele);
         players[mySeat].stand = res;
         setTable({
           ...table,
-          players,
+          players
         });
       });
     });
   };
   const leaveTable = () => {
     setStandMenu(null);
-    socket.emit("sit:leave", match.params.room, (res) => {
+    socket.emit('sit:leave', match.params.room, (res) => {
       if (res == true) {
         setTable((table) => {
           const players = table.players.map((ele) => ele);
           players[mySeat] = null;
           setTable({
             ...table,
-            players,
+            players
           });
           setMySeat(-1);
         });
@@ -154,39 +147,39 @@ const SitGame = ({
     });
   };
   const copyLink = () => {
-    const tmp_tag = document.createElement("input");
-    tmp_tag.value = apiConfig.app + "/games/sit/" + table.id;
+    const tmp_tag = document.createElement('input');
+    tmp_tag.value = apiConfig.app + '/games/sit/' + table.id;
     reference.current.appendChild(tmp_tag);
     tmp_tag.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     reference.current.removeChild(tmp_tag);
-    handleToast("Address copied!", success);
+    handleToast('Address copied!', success);
   };
   const setBehavior = (behavior) => {
-    socket.emit("sit:behavior", match.params.room, behavior, (behavior) => {
+    socket.emit('sit:behavior', match.params.room, behavior, (behavior) => {
       setTable((table) => {
         const newPlayers = JSON.parse(JSON.stringify(table.players));
         newPlayers[mySeat].behavior = behavior;
         return {
           ...table,
-          players: newPlayers,
+          players: newPlayers
         };
       });
     });
   };
   const bet = (status, amount) => {
-    socket.emit("sit:bet", match.params.room, { status, amount });
+    socket.emit('sit:bet', match.params.room, { status, amount });
   };
   const joinTable = () => {
     if (!credential.loginToken) {
-      handleToast("Please login to join the game!");
+      handleToast('Please login to join the game!');
       return;
     }
-    socket.emit("sit:join", match.params.room, password, (res) => {
+    socket.emit('sit:join', match.params.room, password, (res) => {
       if (res.status) {
         setTable(res.sitGame);
         PIVXChange(res.pivx);
-        console.log("sit:join emit");
+        console.log('sit:join emit');
       } else handleToast(res.message);
     });
   };
@@ -194,13 +187,9 @@ const SitGame = ({
   const sendMessage = (e) => {
     console.log(e.target.input_message.value);
     e.preventDefault();
-    if (e.target.input_message.value != "") {
-      socket.emit(
-        "chat:send",
-        "sit_" + match.params.room,
-        e.target.input_message.value
-      );
-      setMessage("");
+    if (e.target.input_message.value != '') {
+      socket.emit('chat:send', 'sit_' + match.params.room, e.target.input_message.value);
+      setMessage('');
     }
   };
   const gameChat = (
@@ -214,23 +203,11 @@ const SitGame = ({
         <div className="message-view">
           {messageList.map((msg, i) => (
             <div key={i}>
-              <span
-                className={
-                  credential.loginUserId == msg.sender.id
-                    ? " text-success "
-                    : ""
-                }
-              >
-                {msg.sender.username}:{" "}
-                <span
-                  className={
-                    credential.loginUserId == msg.sender.id
-                      ? " text-success "
-                      : ""
-                  }
-                >
+              <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+                {msg.sender.username}:{' '}
+                <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
                   {msg.message}
-                </span>{" "}
+                </span>{' '}
               </span>
             </div>
           ))}
@@ -250,10 +227,7 @@ const SitGame = ({
           />
           <div className="input-group-append">
             <span className="input-group-text bg-white" id="basic-addon2">
-              <i
-                className="fa text-success fa-paper-plane"
-                aria-hidden="true"
-              ></i>
+              <i className="fa text-success fa-paper-plane" aria-hidden="true"></i>
             </span>
           </div>
         </div>
@@ -277,8 +251,8 @@ const SitGame = ({
       setSocket(
         io(apiConfig.endPoint, {
           auth: {
-            token: credential.loginToken,
-          },
+            token: credential.loginToken
+          }
         })
       );
     } else {
@@ -287,11 +261,11 @@ const SitGame = ({
   }, [credential.loginToken]);
   useEffect(() => {
     if (socket) {
-      socket.on("connect", () => {
+      socket.on('connect', () => {
         // when connection started
-        console.log("connect");
+        console.log('connect');
       });
-      socket.on("message", (res) => {
+      socket.on('message', (res) => {
         if (res.message) {
           handleToast(res.message, success);
         }
@@ -299,13 +273,13 @@ const SitGame = ({
           PIVXChange(res.pivx);
         }
       });
-      socket.emit("sit:enter", match.params.room, (res) => {
+      socket.emit('sit:enter', match.params.room, (res) => {
         setTable(res.sitGame);
         let id = res.sitGame.players.findIndex(
           (ele) => ele != null && ele.user.id == credential.loginUserId
         );
 
-        console.log("enter emit");
+        console.log('enter emit');
         console.log(id);
         console.log(res.sitGame.allowedBet);
         if (id > -1) {
@@ -319,28 +293,28 @@ const SitGame = ({
           }
         }
       });
-      socket.on("connect_error", (err) => {
-        console.error("sit:error");
+      socket.on('connect_error', (err) => {
+        console.error('sit:error');
         console.error(err.message);
       });
-      socket.on("sit:join", ({ sitGame }) => {
-        console.log("sit join");
+      socket.on('sit:join', ({ sitGame }) => {
+        console.log('sit join');
         console.log(sitGame);
         setTable((table) => {
           return {
-            ...sitGame,
+            ...sitGame
           };
         });
       });
-      socket.on("sit:start", ({ sitGame }) => {
-        console.log("sit start");
+      socket.on('sit:start', ({ sitGame }) => {
+        console.log('sit start');
         console.log(sitGame.players);
         let id = sitGame.players.findIndex(
           (ele) => ele != null && ele.user.id == credential.loginUserId
         );
         if (id > -1 && !sitGame.players[id].fold) {
           setMySeat(id);
-          socket.emit("sit:showMyCards", match.params.room, ({ cards }) => {
+          socket.emit('sit:showMyCards', match.params.room, ({ cards }) => {
             setTable((table) => {
               const players = JSON.parse(JSON.stringify(table.players));
               console.log(cards);
@@ -348,7 +322,7 @@ const SitGame = ({
               console.log(players);
               return {
                 ...table,
-                players,
+                players
               };
             });
           });
@@ -357,8 +331,8 @@ const SitGame = ({
 
         setProgress(100);
       });
-      socket.on("sit:turn", ({ position, time, amount }) => {
-        console.log("sit:turn");
+      socket.on('sit:turn', ({ position, time, amount }) => {
+        console.log('sit:turn');
         setTable((table) => {
           const newPlayers = table.players.map((ele) => {
             if (ele != null) {
@@ -378,60 +352,57 @@ const SitGame = ({
           setProgress((table.turnTime * 1000 - time) / (table.turnTime * 10));
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on(
-        "sit:bet",
-        ({ position, bet, balance, fold, allIn, stand, pot, raise, call }) => {
-          console.log("sit:bet");
-          console.log({
-            position,
-            bet,
-            balance,
-            fold,
-            allIn,
-            stand,
-            pot,
-            raise,
-            call,
-          });
-          setTable((table) => {
-            const newPlayers = JSON.parse(JSON.stringify(table.players));
-            newPlayers[position].bet = bet;
-            newPlayers[position].balance = balance;
-            newPlayers[position].fold = fold;
-            newPlayers[position].allIn = allIn;
-            newPlayers[position].stand = stand;
-            newPlayers[position].pot = pot;
-            newPlayers[position].turn = false;
-            newPlayers[position].raise = raise;
-            newPlayers[position].call = call;
-            console.log(newPlayers[position]);
-            return {
-              ...table,
-              players: newPlayers,
-            };
-          });
-          setEventPositions([position]);
-        }
-      );
-      socket.on("sit:stand", ({ position }) => {
+      socket.on('sit:bet', ({ position, bet, balance, fold, allIn, stand, pot, raise, call }) => {
+        console.log('sit:bet');
+        console.log({
+          position,
+          bet,
+          balance,
+          fold,
+          allIn,
+          stand,
+          pot,
+          raise,
+          call
+        });
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
-          newPlayers[position].stand = 1;
-          console.log("sit:stand");
-          console.log(position);
-          console.log(newPlayers);
+          newPlayers[position].bet = bet;
+          newPlayers[position].balance = balance;
+          newPlayers[position].fold = fold;
+          newPlayers[position].allIn = allIn;
+          newPlayers[position].stand = stand;
+          newPlayers[position].pot = pot;
+          newPlayers[position].turn = false;
+          newPlayers[position].raise = raise;
+          newPlayers[position].call = call;
+          console.log(newPlayers[position]);
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
         setEventPositions([position]);
       });
-      socket.on("sit:card", ({ tableCards, pot }) => {
+      socket.on('sit:stand', ({ position }) => {
+        setTable((table) => {
+          const newPlayers = JSON.parse(JSON.stringify(table.players));
+          newPlayers[position].stand = 1;
+          console.log('sit:stand');
+          console.log(position);
+          console.log(newPlayers);
+          return {
+            ...table,
+            players: newPlayers
+          };
+        });
+        setEventPositions([position]);
+      });
+      socket.on('sit:card', ({ tableCards, pot }) => {
         console.log(tableCards);
         setTimeout(() => {
           setEventPositions([]);
@@ -450,49 +421,49 @@ const SitGame = ({
             ...table,
             tableCards,
             pot,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("sit:open", (sitGame) => {
-        console.log("open");
+      socket.on('sit:open', (sitGame) => {
+        console.log('open');
         setTable(sitGame);
       });
-      socket.on("sit:result", (sitGame, status0, status1) => {
-        console.log("result");
+      socket.on('sit:result', (sitGame, status0, status1) => {
+        console.log('result');
         setTable(sitGame);
         setWinnerText(status0);
         setResultText(status1);
       });
 
-      socket.on("sit:closed", () => {
-        console.log("sit:closed");
-        history.push("/lobby");
+      socket.on('sit:closed', () => {
+        console.log('sit:closed');
+        history.push('/lobby');
       });
-      socket.on("sit:sit", ({ position }) => {
+      socket.on('sit:sit', ({ position }) => {
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position].stand = false;
-          console.log("sit:sit");
+          console.log('sit:sit');
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("sit:leave", ({ position }) => {
+      socket.on('sit:leave', ({ position }) => {
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position] = null;
-          console.log("sit:leave");
+          console.log('sit:leave');
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("sit:third", (positions) => {
-        console.log("sit:third");
+      socket.on('sit:third', (positions) => {
+        console.log('sit:third');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
             if (table.players[positions[i]].user.id == credential.loginUserId) {
@@ -501,12 +472,12 @@ const SitGame = ({
             table.players[positions[i]] = null;
           }
           return {
-            ...table,
+            ...table
           };
         });
       });
-      socket.on("sit:second", (positions) => {
-        console.log("sit:second");
+      socket.on('sit:second', (positions) => {
+        console.log('sit:second');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
             if (table.players[positions[i]].user.id == credential.loginUserId) {
@@ -515,27 +486,27 @@ const SitGame = ({
             table.players[positions[i]] = null;
           }
           return {
-            ...table,
+            ...table
           };
         });
       });
-      socket.on("sit:first", (position) => {
-        console.log("sit:first");
+      socket.on('sit:first', (position) => {
+        console.log('sit:first');
         setClosed(true);
         setTable((table) => {
           if (table.players[position].user.id == credential.loginUserId) {
             setPlace(1);
           }
           return {
-            ...table,
+            ...table
           };
         });
         setTimeout(() => {
-          history.push("/lobby");
+          history.push('/lobby');
         }, 30000);
       });
-      socket.on("sit:playersOut", (positions) => {
-        console.log("sit:out");
+      socket.on('sit:playersOut', (positions) => {
+        console.log('sit:out');
         setTable((table) => {
           const newPlayers = table.players.map((ele) => {
             return ele;
@@ -547,21 +518,21 @@ const SitGame = ({
           console.log(newPlayers);
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("sit:ready", ({ time }) => {
+      socket.on('sit:ready', ({ time }) => {
         console.log(time);
         setTable((table) => {
           return {
             ...table,
             playing: true,
-            ready: time,
+            ready: time
           };
         });
       });
-      socket.on("chat:receive", (message) => {
+      socket.on('chat:receive', (message) => {
         setMessageList((list) => {
           return [...list, message];
         });
@@ -582,15 +553,15 @@ const SitGame = ({
       <div className={classes.root}>
         <Drawer
           variant="persistent"
-          anchor={"left"}
+          anchor={'left'}
           open={chatOpen}
           onClose={() => setChatOpen(!chatOpen)}
           classes={{
-            paper: classes.drawerPaper,
+            paper: classes.drawerPaper
           }}
           className={classes.drawer}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true // Better open performance on mobile.
           }}
         >
           {gameChat}
@@ -600,13 +571,13 @@ const SitGame = ({
             onClick={() => setChatOpen(!chatOpen)}
             color="tumblr"
             style={{
-              position: "absolute",
-              right: "-31px",
-              borderTopRightRadius: "10px",
-              borderBottomRightRadius: "10px",
-              borderTopLeftRadius: "0px",
-              borderBottomLeftRadius: "0px",
-              padding: "4px",
+              position: 'absolute',
+              right: '-31px',
+              borderTopRightRadius: '10px',
+              borderBottomRightRadius: '10px',
+              borderTopLeftRadius: '0px',
+              borderBottomLeftRadius: '0px',
+              padding: '4px'
             }}
           >
             <AiFillWechat />
@@ -617,16 +588,13 @@ const SitGame = ({
           className={clsx(
             classes.content,
             {
-              [classes.contentShift]: chatOpen,
+              [classes.contentShift]: chatOpen
             },
             classes[`table_${table.tableSize}`]
           )}
         >
           <div className={classes.menu_bar}>
-            <Button
-              justIcon
-              onClick={(event) => setMainMenu(event.currentTarget)}
-            >
+            <Button justIcon onClick={(event) => setMainMenu(event.currentTarget)}>
               <MdMenu />
             </Button>
             <Menu
@@ -642,23 +610,20 @@ const SitGame = ({
             </Menu>
             <div className={classes.balance_pad}>
               <span>
-                Balance : {showDot(credential.loginUserPivx)}{" "}
-                <small>satoshi</small>
+                Balance : {showDot(credential.loginUserPivx)} <small>satoshi</small>
               </span>
-              {table &&
-              table.players[mySeat] &&
-              table.players[mySeat].balance ? (
+              {table && table.players[mySeat] && table.players[mySeat].balance ? (
                 <span>
                   In Play : {showDot(table.buyIn)} <small>satoshi</small>
                 </span>
               ) : (
-                ""
+                ''
               )}
             </div>
           </div>
           <div className={classes.title_bar}>
             <span onClick={() => setInfoModal(true)}>{table.name}</span>
-          </div>{" "}
+          </div>{' '}
           <div className={classes.table_pad}>
             {table
               ? table.players.map((ele, key) => {
@@ -668,32 +633,26 @@ const SitGame = ({
                         key={key}
                         className={clsx(
                           {
-                            "right-hand":
-                              key < Math.ceil(table.tableSize / 2) && key != 0,
-                            stand: ele != null && ele.stand,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            stand: ele != null && ele.stand
                           },
-                          "users-on-board"
+                          'users-on-board'
                         )}
                       >
-                        <Button
-                          color="success"
-                          className="user-avatar"
-                          justIcon
-                          round
-                        >
+                        <Button color="success" className="user-avatar" justIcon round>
                           +
                         </Button>
                         {eventPositions.includes(key) ? (
                           <div
                             className={clsx(
                               classes.eventPlayer,
-                              "animate__animated animate__fadeOutUp animate__slow"
+                              'animate__animated animate__fadeOutUp animate__slow'
                             )}
                           >
                             Out
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </div>
                     );
@@ -703,11 +662,10 @@ const SitGame = ({
                         key={key}
                         className={clsx(
                           {
-                            "right-hand":
-                              key < Math.ceil(table.tableSize / 2) && key != 0,
-                            stand: ele != null && ele.stand,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            stand: ele != null && ele.stand
                           },
-                          "users-on-board"
+                          'users-on-board'
                         )}
                         onClick={(event) => {
                           if (key == mySeat) setStandMenu(event.currentTarget);
@@ -723,70 +681,50 @@ const SitGame = ({
                               </div>
                             ))}
                           </div>
-                          <div className="chips-amount total">
-                            {ele.bet > 0 ? ele.bet : ""}
-                          </div>
+                          <div className="chips-amount total">{ele.bet > 0 ? ele.bet : ''}</div>
                         </div>
 
                         {ele.fold == false && ele.cards != null ? (
                           ele.win ? (
                             <div className="player-cards animate__animated animate__heartBeat animate__repeat-3 animate__slower">
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[0] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[0] + ''), 'choosen-card')}
                               </div>
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[1] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[1] + ''), 'choosen-card')}
                               </div>
                             </div>
                           ) : (
                             <div className="player-cards animate__animated animate__fadeInUp">
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[0] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[0] + ''), 'choosen-card')}
                               </div>
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[1] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[1] + ''), 'choosen-card')}
                               </div>
                             </div>
                           )
                         ) : (
-                          ""
+                          ''
                         )}
 
                         <div className="user-info">
                           <span>{ele.user.username}</span>
-                          <span className={classes.balance}>
-                            {" "}
-                            {showKilo(ele.balance)}
-                          </span>
+                          <span className={classes.balance}> {showKilo(ele.balance)}</span>
                         </div>
                         {ele.turn ? (
                           <div className={classes.progressBar}>
-                            <LinearProgress
-                              variant="determinate"
-                              value={progress}
-                            />
+                            <LinearProgress variant="determinate" value={progress} />
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
 
                         {ele.avatar ? (
                           <img
                             src={`${apiConfig.api}/uploads/avatars/${ele.avatar}`}
                             alt="A"
-                            className={clsx(classes.userAvatar, "user-avatar")}
+                            className={clsx(classes.userAvatar, 'user-avatar')}
                           />
                         ) : (
                           <Avatar
@@ -805,7 +743,7 @@ const SitGame = ({
                             round="80px"
                           />
                         ) : (
-                          ""
+                          ''
                         )}
                         {
                           //   ele.user.id === credential.loginUserId ? (
@@ -824,42 +762,42 @@ const SitGame = ({
                           <div
                             className={clsx(
                               classes.eventPlayer,
-                              "animate__animated animate__fadeOutUp animate__slow"
+                              'animate__animated animate__fadeOutUp animate__slow'
                             )}
                           >
                             {ele.stand
-                              ? "Stand"
+                              ? 'Stand'
                               : ele.fold
-                              ? "Fold"
+                              ? 'Fold'
                               : ele.allIn
-                              ? "All In"
+                              ? 'All In'
                               : ele.raise
-                              ? "Raise"
+                              ? 'Raise'
                               : ele.call
-                              ? "Call"
-                              : "Check"}
+                              ? 'Call'
+                              : 'Check'}
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                         {ele.win ? (
                           <div
                             className={clsx(
                               classes.eventPlayer,
                               classes.winEvent,
-                              "animate__animated animate__fadeOutUp  animate__slower"
+                              'animate__animated animate__fadeOutUp  animate__slower'
                             )}
                           >
                             {ranks[ele.rank]}
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </div>
                     );
                   }
                 })
-              : ""}
+              : ''}
             <Menu
               id="simple-menu"
               anchorEl={standMenu}
@@ -873,8 +811,8 @@ const SitGame = ({
                 mySeat > -1 &&
                 table.players[mySeat] != null &&
                 table.players[mySeat].stand
-                  ? "Sit"
-                  : "Stand"}
+                  ? 'Sit'
+                  : 'Stand'}
               </MenuItem>
               <MenuItem onClick={leaveTable}>Leave</MenuItem>
             </Menu>
@@ -885,18 +823,18 @@ const SitGame = ({
                 {resultText}
               </React.Fragment>
             </div>
-            <div className={classes.table_cards + " table-cards"}>
+            <div className={classes.table_cards + ' table-cards'}>
               <div className="card-center-possition">
                 {table.tableCards
                   ? table.tableCards.map((ele, key) => (
                       <React.Fragment key={key}>
                         {getCards(
-                          getCardSrc(ele + ""),
-                          "card-size animate__animated animate__flipInY"
+                          getCardSrc(ele + ''),
+                          'card-size animate__animated animate__flipInY'
                         )}
                       </React.Fragment>
                     ))
-                  : ""}
+                  : ''}
               </div>
               <div className="chips-pad">
                 <div className="chip-stacks">
@@ -908,24 +846,14 @@ const SitGame = ({
                     </div>
                   ))}
                 </div>
-                <div className="chips-amount total">
-                  {table.pot > 0 ? table.pot : ""}
-                </div>
+                <div className="chips-amount total">{table.pot > 0 ? table.pot : ''}</div>
               </div>
             </div>
-            <Hidden xsDown>
-              <img
-                className={classes.background}
-                src={PokerTable}
-                alt="Table"
-              />
+            <Hidden smDown>
+              <img className={classes.background} src={PokerTable} alt="Table" />
             </Hidden>
             <Hidden smUp>
-              <img
-                className={classes.background}
-                src={PokerTableMobile}
-                alt="Table"
-              />
+              <img className={classes.background} src={PokerTableMobile} alt="Table" />
             </Hidden>
           </div>
           {table &&
@@ -935,30 +863,28 @@ const SitGame = ({
           !table.players[mySeat].stand ? (
             table.players[mySeat].turn ? (
               <div className={classes.control_pad}>
-                <Button color="warning" onClick={() => bet("fold")}>
+                <Button color="warning" onClick={() => bet('fold')}>
                   Fold
                 </Button>
-                {callStatus == "allIn" ? (
-                  <Button color="danger" onClick={() => bet("allIn")}>
+                {callStatus == 'allIn' ? (
+                  <Button color="danger" onClick={() => bet('allIn')}>
                     All In
                   </Button>
-                ) : callStatus == "allIn_minRaise" ? (
+                ) : callStatus == 'allIn_minRaise' ? (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
+                    <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0
-                        ? "Call " + (call - table.players[mySeat].bet)
-                        : "Check"}
+                        ? 'Call ' + (call - table.players[mySeat].bet)
+                        : 'Check'}
                     </Button>
-                    <Button color="danger" onClick={() => bet("allIn")}>
+                    <Button color="danger" onClick={() => bet('allIn')}>
                       All In
                     </Button>
                   </React.Fragment>
-                ) : callStatus == "allIn_maxRaise" ? (
+                ) : callStatus == 'allIn_maxRaise' ? (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
-                      {call - table.players[mySeat].bet > 0
-                        ? "Call " + call
-                        : "Check"}
+                    <Button color="info" onClick={() => bet('call', call)}>
+                      {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
                     </Button>
                     <Button
                       justIcon
@@ -977,7 +903,7 @@ const SitGame = ({
                       getAriaValueText={(val) => val}
                       min={minRaise}
                       max={maxRaise}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.slider}
                     />
                     <Button
@@ -991,24 +917,19 @@ const SitGame = ({
                     </Button>
 
                     {raise == maxRaise ? (
-                      <Button color="danger" onClick={() => bet("allIn")}>
+                      <Button color="danger" onClick={() => bet('allIn')}>
                         All In
                       </Button>
                     ) : (
-                      <Button
-                        color="primary"
-                        onClick={() => bet("call", raise)}
-                      >
+                      <Button color="primary" onClick={() => bet('call', raise)}>
                         Raise ({raise})
                       </Button>
                     )}
                   </React.Fragment>
                 ) : (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
-                      {call - table.players[mySeat].bet > 0
-                        ? "Call " + call
-                        : "Check"}
+                    <Button color="info" onClick={() => bet('call', call)}>
+                      {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
                     </Button>
                     <Button
                       justIcon
@@ -1027,7 +948,7 @@ const SitGame = ({
                       getAriaValueText={(val) => val}
                       min={minRaise}
                       max={maxRaise}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.slider}
                     />
                     <Button
@@ -1039,7 +960,7 @@ const SitGame = ({
                     >
                       <AiOutlinePlus />
                     </Button>
-                    <Button color="primary" onClick={() => bet("call", raise)}>
+                    <Button color="primary" onClick={() => bet('call', raise)}>
                       Raise ({raise})
                     </Button>
                   </React.Fragment>
@@ -1059,7 +980,7 @@ const SitGame = ({
               </div>
             )
           ) : (
-            ""
+            ''
           )}
           {!chatOpen ? (
             <Button
@@ -1067,19 +988,19 @@ const SitGame = ({
               onClick={() => setChatOpen(true)}
               color="tumblr"
               style={{
-                position: "absolute",
-                left: "0px",
-                borderTopRightRadius: "10px",
-                borderBottomRightRadius: "10px",
-                borderTopLeftRadius: "0px",
-                borderBottomLeftRadius: "0px",
-                padding: "4px",
+                position: 'absolute',
+                left: '0px',
+                borderTopRightRadius: '10px',
+                borderBottomRightRadius: '10px',
+                borderTopLeftRadius: '0px',
+                borderBottomLeftRadius: '0px',
+                padding: '4px'
               }}
             >
               <AiFillWechat />
             </Button>
           ) : (
-            ""
+            ''
           )}
         </div>
 
@@ -1089,10 +1010,6 @@ const SitGame = ({
             aria-describedby="transition-modal-description"
             open={table && !table.playing}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500,
-            }}
             className={classes.modal}
           >
             <Fade in={table && !table.playing}>
@@ -1104,7 +1021,7 @@ const SitGame = ({
                     round
                     justIcon
                     className={classes.modal_close}
-                    onClick={() => history.push("/lobby")}
+                    onClick={() => history.push('/lobby')}
                   >
                     <AiOutlineLogout />
                   </Button>
@@ -1112,17 +1029,17 @@ const SitGame = ({
                 <TextField
                   id="standard-full-width"
                   label="Table Name"
-                  style={{ margin: 8, fontSize: "30px" }}
+                  style={{ margin: 8, fontSize: '30px' }}
                   helperText="Max Length is 10 character"
                   fullWidth
                   margin="normal"
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   InputProps={{
-                    style: { fontSize: "30px" },
+                    style: { fontSize: '30px' },
                     value: table.name,
-                    readOnly: true,
+                    readOnly: true
                   }}
                 />
                 <Grid container spacing={3}>
@@ -1133,15 +1050,15 @@ const SitGame = ({
                     <TextField
                       id="table-size"
                       label="Players"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.players.length + "/" + table.tableSize,
-                        readOnly: true,
+                        value: table.players.length + '/' + table.tableSize,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1154,17 +1071,17 @@ const SitGame = ({
                     <TextField
                       id="turn-time"
                       label="Turn Time"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showTurnTime(table.turnTime),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1176,17 +1093,17 @@ const SitGame = ({
                     <TextField
                       id="starting-stack"
                       label="Starting Stack"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.startingStack,
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1198,21 +1115,21 @@ const SitGame = ({
                     <TextField
                       id="limit"
                       label="Limit"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.limit ? "Pot Limit" : "No Limit",
-                        readOnly: true,
+                        value: table.limit ? 'Pot Limit' : 'No Limit',
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={3}>
+                <Grid container spacing={3} mt={3}>
                   <Grid item xs={4} className={classes.modal_label}>
                     Blind Schedule:
                   </Grid>
@@ -1220,42 +1137,29 @@ const SitGame = ({
                     <TextField
                       id="blind-schedule"
                       label="Blind Schedule"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: [
-                          "Very Slow",
-                          "Slow",
-                          "Normal",
-                          "Fast",
-                          "Very Fast",
-                        ][table.blindSchedule],
-                        readOnly: true,
+                        value: ['Very Slow', 'Slow', 'Normal', 'Fast', 'Very Fast'][
+                          table.blindSchedule
+                        ],
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={3}>
-                  <TableContainer
-                    component={Paper}
-                    className={classes.tableContainer}
-                  >
-                    <Table
-                      className={classes.table}
-                      size="small"
-                      aria-label="a dense table"
-                    >
+                  <TableContainer component={Paper} className={classes.tableContainer}>
+                    <Table className={classes.table} size="small" aria-label="a dense table">
                       <TableHead>
                         <StyledTableRow>
                           <StyledTableCell>Blind</StyledTableCell>
-                          <StyledTableCell align="right">
-                            Duration
-                          </StyledTableCell>
+                          <StyledTableCell align="right">Duration</StyledTableCell>
                         </StyledTableRow>
                       </TableHead>
                       <TableBody>
@@ -1264,9 +1168,7 @@ const SitGame = ({
                             <StyledTableCell component="th" scope="row">
                               {showKilo(row.blinds)}
                             </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {row.duration}
-                            </StyledTableCell>
+                            <StyledTableCell align="right">{row.duration}</StyledTableCell>
                           </StyledTableRow>
                         ))}
                       </TableBody>
@@ -1286,11 +1188,11 @@ const SitGame = ({
                       type="number"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.buyIn,
-                        readOnly: true,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1301,9 +1203,7 @@ const SitGame = ({
                     Prize Pool:
                   </Grid>
                   <Grid item xs={8} className={classes.modal_field}>
-                    {showDot(
-                      table.firstPlace + table.secondPlace + table.thirdPlace
-                    )}
+                    {showDot(table.firstPlace + table.secondPlace + table.thirdPlace)}
                   </Grid>
                 </Grid>
                 <Grid container spacing={5}>
@@ -1323,13 +1223,13 @@ const SitGame = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.firstPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1345,13 +1245,13 @@ const SitGame = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.secondPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1367,13 +1267,13 @@ const SitGame = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.thirdPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1391,44 +1291,36 @@ const SitGame = ({
                           autoComplete="current-password"
                           InputProps={{
                             value: password,
-                            onChange: (e) => setPassword(e.target.value),
+                            onChange: (e) => setPassword(e.target.value)
                           }}
-                        />{" "}
+                        />{' '}
                       </FormControl>
                     </Grid>
                   </Grid>
                 ) : (
-                  ""
+                  ''
                 )}
 
                 <Grid container spacing={3} className="mt-3">
                   {table.players.find((ele) =>
                     ele != null ? ele.user.id === credential.loginUserId : false
                   ) ? (
-                    <Button
-                      color="primary"
-                      style={{ margin: "auto auto" }}
-                      onClick={joinTable}
-                    >
+                    <Button color="primary" style={{ margin: 'auto auto' }} onClick={joinTable}>
                       Unregister
                     </Button>
                   ) : table.players.length < table.tableSize ? (
-                    <Button
-                      color="primary"
-                      style={{ margin: "auto auto" }}
-                      onClick={joinTable}
-                    >
+                    <Button color="primary" style={{ margin: 'auto auto' }} onClick={joinTable}>
                       Register
                     </Button>
                   ) : (
-                    ""
+                    ''
                   )}
                 </Grid>
               </div>
             </Fade>
           </Modal>
         ) : (
-          ""
+          ''
         )}
         {table ? (
           <Modal
@@ -1437,10 +1329,6 @@ const SitGame = ({
             open={infoModal}
             onClose={() => setInfoModal(!infoModal)}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500,
-            }}
             className={classes.modal}
           >
             <Fade in={infoModal}>
@@ -1466,15 +1354,15 @@ const SitGame = ({
                     <TextField
                       id="table-size"
                       label="Players"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.creator.username,
-                        readOnly: true,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1487,15 +1375,15 @@ const SitGame = ({
                     <TextField
                       id="table-size"
                       label="Players"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.players.length + "/" + table.tableSize,
-                        readOnly: true,
+                        value: table.players.length + '/' + table.tableSize,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1508,17 +1396,17 @@ const SitGame = ({
                     <TextField
                       id="turn-time"
                       label="Turn Time"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showTurnTime(table.turnTime),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1530,17 +1418,17 @@ const SitGame = ({
                     <TextField
                       id="starting-stack"
                       label="Starting Stack"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.startingStack,
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1552,17 +1440,17 @@ const SitGame = ({
                     <TextField
                       id="limit"
                       label="Limit"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: table.limit ? "Pot Limit" : "No Limit",
-                        readOnly: true,
+                        value: table.limit ? 'Pot Limit' : 'No Limit',
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1574,42 +1462,29 @@ const SitGame = ({
                     <TextField
                       id="blind-schedule"
                       label="Blind Schedule"
-                      style={{ margin: 8, minWidth: "120px" }}
+                      style={{ margin: 8, minWidth: '120px' }}
                       fullWidth
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
-                        value: [
-                          "Very Slow",
-                          "Slow",
-                          "Normal",
-                          "Fast",
-                          "Very Fast",
-                        ][table.blindSchedule],
-                        readOnly: true,
+                        value: ['Very Slow', 'Slow', 'Normal', 'Fast', 'Very Fast'][
+                          table.blindSchedule
+                        ],
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={3}>
-                  <TableContainer
-                    component={Paper}
-                    className={classes.tableContainer}
-                  >
-                    <Table
-                      className={classes.table}
-                      size="small"
-                      aria-label="a dense table"
-                    >
+                <Grid container spacing={3} mt={3}>
+                  <TableContainer component={Paper} className={classes.tableContainer}>
+                    <Table className={classes.table} size="small" aria-label="a dense table">
                       <TableHead>
                         <StyledTableRow>
                           <StyledTableCell>Blind</StyledTableCell>
-                          <StyledTableCell align="right">
-                            Duration
-                          </StyledTableCell>
+                          <StyledTableCell align="right">Duration</StyledTableCell>
                         </StyledTableRow>
                       </TableHead>
                       <TableBody>
@@ -1618,9 +1493,7 @@ const SitGame = ({
                             <StyledTableCell component="th" scope="row">
                               {showKilo(row.blinds)}
                             </StyledTableCell>
-                            <StyledTableCell align="right">
-                              {row.duration}
-                            </StyledTableCell>
+                            <StyledTableCell align="right">{row.duration}</StyledTableCell>
                           </StyledTableRow>
                         ))}
                       </TableBody>
@@ -1640,11 +1513,11 @@ const SitGame = ({
                       type="number"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: table.buyIn,
-                        readOnly: true,
+                        readOnly: true
                       }}
                     />
                   </Grid>
@@ -1655,9 +1528,7 @@ const SitGame = ({
                     Prize Pool:
                   </Grid>
                   <Grid item xs={8} className={classes.modal_field}>
-                    {showDot(
-                      table.firstPlace + table.secondPlace + table.thirdPlace
-                    )}
+                    {showDot(table.firstPlace + table.secondPlace + table.thirdPlace)}
                   </Grid>
                 </Grid>
                 <Grid container spacing={5}>
@@ -1677,13 +1548,13 @@ const SitGame = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.firstPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1699,13 +1570,13 @@ const SitGame = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.secondPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
 
@@ -1721,13 +1592,13 @@ const SitGame = ({
                       type="text"
                       margin="normal"
                       InputLabelProps={{
-                        shrink: true,
+                        shrink: true
                       }}
                       InputProps={{
                         value: showDot(table.thirdPlace),
-                        readOnly: true,
+                        readOnly: true
                       }}
-                    />{" "}
+                    />{' '}
                   </Grid>
                 </Grid>
                 <Grid container spacing={3}>
@@ -1742,28 +1613,28 @@ const SitGame = ({
             </Fade>
           </Modal>
         ) : (
-          ""
+          ''
         )}
         {table.ready > 0 ? (
           <Backdrop className={classes.backdrop} open={table.ready > 0}>
             <CircularProgress color="primary" />
-            <div style={{ marginLeft: "20px" }}>
+            <div style={{ marginLeft: '20px' }}>
               {Math.floor(table.ready / 60) > 1
-                ? Math.floor(table.ready / 60) + "mins"
+                ? Math.floor(table.ready / 60) + 'mins'
                 : Math.floor(table.ready / 60) > 0
-                ? Math.floor(table.ready / 60) + "min"
-                : ""}{" "}
-              {(table.ready % 60) + " secs to ready game!"}
+                ? Math.floor(table.ready / 60) + 'min'
+                : ''}{' '}
+              {(table.ready % 60) + ' secs to ready game!'}
             </div>
           </Backdrop>
         ) : (
-          ""
+          ''
         )}
         {place > 0 ? (
           <Backdrop
             className={classes.backdrop}
             open={place > 0}
-            onClick={() => history.push("/lobby")}
+            onClick={() => history.push('/lobby')}
           >
             <div class="firework-1"></div>
             <div class="firework-2"></div>
@@ -1781,20 +1652,19 @@ const SitGame = ({
             <div class="firework-14"></div>
             <div class="firework-15"></div>
             <div class="congratulation">
-              Congratulations! You take{" "}
-              {place == 1 ? "1st" : place == 2 ? "2nd" : "3rd"} place.
+              Congratulations! You take {place == 1 ? '1st' : place == 2 ? '2nd' : '3rd'} place.
             </div>
           </Backdrop>
         ) : closed ? (
           <Backdrop
             className={classes.backdrop}
             open={closed}
-            onClick={() => history.push("/lobby")}
+            onClick={() => history.push('/lobby')}
           >
             <div>Closed</div>
           </Backdrop>
         ) : (
-          ""
+          ''
         )}
       </div>
     </div>
@@ -1809,12 +1679,10 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
       PIVXChange: global.Actions.LoginAction.PIVXChange,
-      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess,
+      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess
     },
     dispatch
   );
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(SitGame)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SitGame));

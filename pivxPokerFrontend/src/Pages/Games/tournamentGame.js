@@ -1,10 +1,10 @@
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Drawer from '@mui/material/Drawer';
+import Hidden from '@mui/material/Hidden';
+import LinearProgress from '@mui/material/LinearProgress';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import clsx from 'clsx';
 import React, { useRef } from 'react';
 import { MdMenu } from 'react-icons/md';
@@ -13,20 +13,20 @@ import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import io from 'socket.io-client';
 
-import Fade from '@material-ui/core/Fade';
-import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
-import Modal from '@material-ui/core/Modal';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Fade from '@mui/material/Fade';
+import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
+import Modal from '@mui/material/Modal';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import { makeStyles, useTheme, withStyles } from '@mui/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
 import { AiFillWechat, AiOutlineLogout, AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
@@ -841,7 +841,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                 <div className="chips-amount total">{table.pot > 0 ? table.pot : ''}</div>
               </div>
             </div>
-            <Hidden xsDown>
+            <Hidden smDown>
               <img className={classes.background} src={PokerTable} alt="Table" />
             </Hidden>
             <Hidden smUp>
@@ -1002,10 +1002,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
             aria-describedby="transition-modal-description"
             open={table && !table.playing}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500
-            }}
+        
             className={classes.modal}
           >
             <Fade in={table && !table.playing}>
@@ -1323,10 +1320,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
             open={infoModal}
             onClose={() => setInfoModal(!infoModal)}
             closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500
-            }}
+       
             className={classes.modal}
           >
             <Fade in={infoModal}>

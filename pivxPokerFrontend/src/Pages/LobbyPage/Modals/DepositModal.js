@@ -1,13 +1,12 @@
 import { useRef } from "react";
 import QRCode from "react-qr-code";
 import { AiOutlineClose, AiOutlineCopy } from "react-icons/ai";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
 import handleToast, { success } from "Components/toast";
 import Button from "Components/Button";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
+import Modal from "@mui/material/Modal";
+import Fade from "@mui/material/Fade";
 import modalStyle from "jss/modalStyle";
 
 const useStyles = makeStyles(modalStyle);
@@ -44,10 +43,7 @@ const DepositModal = ({ depositModal, setDepositModal, credential }) => {
         open={depositModal}
         onClose={() => setDepositModal(!depositModal)}
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+     
         className={classes.modal}
       >
         <Fade in={depositModal}>

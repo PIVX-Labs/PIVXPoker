@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import Backdrop from '@material-ui/core/Backdrop';
-import { makeStyles } from '@material-ui/core/styles';
+import Backdrop from '@mui/material/Backdrop';
+import { makeStyles } from '@mui/styles';
 import { useState } from 'react';
 import Avatar from 'react-avatar';
 import { withRouter } from 'react-router-dom';

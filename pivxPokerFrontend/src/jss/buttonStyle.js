@@ -29,7 +29,7 @@ const buttonStyle = {
     minHeight: "auto",
     minWidth: "auto",
     backgroundColor: grayColor[0],
-    color: whiteColor,
+    color: `${whiteColor} !important`,
     // boxShadow:
     //   "0 2px 2px 0 rgba(" +
     //   hexToRgb(grayColor[0]) +

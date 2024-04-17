@@ -1,14 +1,13 @@
 import { useState } from "react";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
 import { AiOutlineClose } from "react-icons/ai";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
 import handleToast, { success } from "Components/toast";
 import Button from "Components/Button";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
+import Modal from "@mui/material/Modal";
+import Fade from "@mui/material/Fade";
 import modalStyle from "jss/modalStyle";
 
 const useStyles = makeStyles(modalStyle);
@@ -60,10 +59,7 @@ const FeedbackModal = ({ feedbackModal, setFeedbackModal, credential,SetEmail}) 
         open={feedbackModal}
         onClose={cancelModal}
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+    
         className={classes.modal}
       >
         <Fade in={feedbackModal}>
