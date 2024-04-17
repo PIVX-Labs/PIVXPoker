@@ -1,83 +1,71 @@
-import { connect } from "react-redux";
-import React, { useRef } from "react";
-import { withRouter } from "react-router-dom";
-import Drawer from "@material-ui/core/Drawer";
-import clsx from "clsx";
-import { bindActionCreators } from "redux";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Hidden from "@material-ui/core/Hidden";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import io from "socket.io-client";
-import Button from "../../Components/Button";
-import PokerTable from "../../images/poker-table.png";
-import PokerTableMobile from "../../images/poker-table-mobile.png";
-import PrettoSlider from "../../Components/PrettoSlider";
+import { connect } from 'react-redux';
+import React, { useRef } from 'react';
+import { withRouter } from 'react-router-dom';
+import Drawer from '@material-ui/core/Drawer';
+import clsx from 'clsx';
+import { bindActionCreators } from 'redux';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Hidden from '@material-ui/core/Hidden';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import io from 'socket.io-client';
+import Button from '../../Components/Button';
+import PokerTable from '../../images/poker-table.png';
+import PokerTableMobile from '../../images/poker-table-mobile.png';
+import PrettoSlider from '../../Components/PrettoSlider';
 import {
   showKilo,
   showPotChips,
   showDot,
   showTurnTime,
   showTableSize,
-  showMaxTimeBank,
-} from "../../shared/printConfig";
-import {
-  AiFillWechat,
-  AiOutlineClose,
-  AiOutlinePlus,
-  AiOutlineMinus,
-} from "react-icons/ai";
-import { MdMenu } from "react-icons/md";
-import "../../css/games.css";
-import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
-import { getCards, getCardSrc } from "../../Components/cards";
-import { makeStyles } from "@material-ui/core/styles";
-import Chip from "../../Components/Chip";
-import gameStyle from "../../jss/pages/cashGameStyle";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { chips, ranks } from "../../shared/constants";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import Grid from "@material-ui/core/Grid";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import handleToast, { success } from "../../Components/toast";
+  showMaxTimeBank
+} from '../../shared/printConfig';
+import { AiFillWechat, AiOutlineClose, AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
+import { MdMenu } from 'react-icons/md';
+import '../../css/games.css';
+import { useEffect, useState } from 'react';
+import Avatar from 'react-avatar';
+import { getCards, getCardSrc } from '../../Components/cards';
+import { makeStyles } from '@material-ui/core/styles';
+import Chip from '../../Components/Chip';
+import gameStyle from '../../jss/pages/cashGameStyle';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { chips, ranks } from '../../shared/constants';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
+import handleToast, { success } from '../../Components/toast';
 
 const useStyles = makeStyles(gameStyle);
-const CashGame = ({
-  match,
-  history,
-  status,
-  credential,
-  PIVXChange,
-  LogOutSuccess,
-}) => {
+const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess }) => {
   const reference = useRef();
   const classes = useStyles();
   const { apiConfig } = global;
   const theme = useTheme();
-  const lg = useMediaQuery(theme.breakpoints.up("lg"));
-  const md = useMediaQuery(theme.breakpoints.up("md"));
-  const sm = useMediaQuery(theme.breakpoints.up("sm"));
-  const xs = useMediaQuery(theme.breakpoints.up("xs"));
-  const [winnerText, setWinnerText] = useState("");
-  const [resultText, setResultText] = useState("");
+  const lg = useMediaQuery(theme.breakpoints.up('lg'));
+  const md = useMediaQuery(theme.breakpoints.up('md'));
+  const sm = useMediaQuery(theme.breakpoints.up('sm'));
+  const xs = useMediaQuery(theme.breakpoints.up('xs'));
+  const [winnerText, setWinnerText] = useState('');
+  const [resultText, setResultText] = useState('');
   const [passwordModal, setPasswordModal] = useState(false);
-  const [password, setPassword] = useState("");
-  const [seat, setSeat] = useState("");
-  const [socket, setSocket] = useState("");
+  const [password, setPassword] = useState('');
+  const [seat, setSeat] = useState('');
+  const [socket, setSocket] = useState('');
   const [chatOpen, setChatOpen] = useState(!status.mobileView);
-  let [message, setMessage] = useState("");
+  let [message, setMessage] = useState('');
   let [messageList, setMessageList] = useState([]);
-  const [table, setTable] = useState("");
+  const [table, setTable] = useState('');
   const [mySeat, setMySeat] = useState(-1);
   const [progress, setProgress] = useState(100);
   const [call, setCall] = useState(0);
-  const [callStatus, setCallStatus] = useState("");
+  const [callStatus, setCallStatus] = useState('');
   const [raise, setRaise] = useState(0);
   const [minRaise, setMinRaise] = useState(0);
   const [maxRaise, setMaxRaise] = useState(0);
@@ -89,63 +77,65 @@ const CashGame = ({
   const [loading, setLoading] = useState(0);
   const [infoModal, setInfoModal] = useState(false);
   const gotoLobby = () => {
-    history.push("/lobby");
+    history.push('/lobby');
   };
   const logout = () => {
-    socket.emit("cash:leave", match.params.room, (res) => {
+    socket.emit('cash:leave', match.params.room, (res) => {
       if (res == true) {
         LogOutSuccess();
-        history.push("/");
+        history.push('/');
       }
     });
   };
   const changeStand = () => {
     setStandMenu(null);
-    socket.emit("cash:stand", match.params.room, (res) => {
+    socket.emit('cash:stand', match.params.room, (res) => {
       setTable((table) => {
         const players = table.players.map((ele) => ele);
         players[mySeat].stand = res;
-        setTable({
+        return {
           ...table,
-          players,
-        });
+          players
+        };
       });
     });
   };
   const leaveTable = () => {
     setStandMenu(null);
-    socket.emit("cash:leave", match.params.room, (res) => {
+    socket.emit('cash:leave', match.params.room, (res) => {
       if (res == true) {
         setTable((table) => {
           const players = table.players.map((ele) => ele);
           players[mySeat] = null;
-          setTable({
-            ...table,
-            players,
-          });
+
           setMySeat(-1);
+
+          return {
+            ...table,
+            players
+          };
         });
       }
     });
   };
   const setBehavior = (behavior) => {
-    socket.emit("cash:behavior", match.params.room, behavior, (behavior) => {
+    socket.emit('cash:behavior', match.params.room, behavior, (behavior) => {
       setTable((table) => {
         const newPlayers = JSON.parse(JSON.stringify(table.players));
         newPlayers[mySeat].behavior = behavior;
         return {
           ...table,
-          players: newPlayers,
+          players: newPlayers
         };
       });
     });
   };
   const bet = (status, amount) => {
-    socket.emit("cash:bet", match.params.room, { status, amount });
+    socket.emit('cash:bet', match.params.room, { status, amount });
   };
   const requestJoinTable = (key) => {
     if (!credential.loginToken) {
-      handleToast("Please login to join the game!");
+      handleToast('Please login to join the game!');
       return;
     }
     if (
@@ -166,7 +156,7 @@ const CashGame = ({
     setPasswordModal(false);
     setBuyInModal(false);
     if (!credential.loginToken) {
-      handleToast("Please login to join the game!");
+      handleToast('Please login to join the game!');
     }
     if (
       !table.players.find((ele) =>
@@ -174,39 +164,28 @@ const CashGame = ({
       ) &&
       table.players[seat] === null
     ) {
-      socket.emit(
-        "cash:join",
-        match.params.room,
-        seat,
-        password,
-        buyIn,
-        (res) => {
-          if (res.status) {
-            setTable(res.cashGame);
-            PIVXChange(res.pivx);
-            let id = res.cashGame.players.findIndex(
-              (ele) => ele != null && ele.user.id == credential.loginUserId
-            );
-            console.log("cash:join emit");
+      socket.emit('cash:join', match.params.room, seat, password, buyIn, (res) => {
+        if (res.status) {
+          setTable(res.cashGame);
+          PIVXChange(res.pivx);
+          let id = res.cashGame.players.findIndex(
+            (ele) => ele != null && ele.user.id == credential.loginUserId
+          );
+          console.log('cash:join emit');
 
-            if (id > -1) {
-              setMySeat(id);
-            }
-          } else handleToast(res.message);
-        }
-      );
+          if (id > -1) {
+            setMySeat(id);
+          }
+        } else handleToast(res.message);
+      });
     }
   };
   const sendMessage = (e) => {
     console.log(e.target.input_message.value);
     e.preventDefault();
-    if (e.target.input_message.value != "") {
-      socket.emit(
-        "chat:send",
-        "cash_" + match.params.room,
-        e.target.input_message.value
-      );
-      setMessage("");
+    if (e.target.input_message.value != '') {
+      socket.emit('chat:send', 'cash_' + match.params.room, e.target.input_message.value);
+      setMessage('');
     }
   };
   const gameChat = (
@@ -220,23 +199,11 @@ const CashGame = ({
         <div className="message-view">
           {messageList.map((msg, i) => (
             <div key={i}>
-              <span
-                className={
-                  credential.loginUserId == msg.sender.id
-                    ? " text-success "
-                    : ""
-                }
-              >
-                {msg.sender.username}:{" "}
-                <span
-                  className={
-                    credential.loginUserId == msg.sender.id
-                      ? " text-success "
-                      : ""
-                  }
-                >
+              <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+                {msg.sender.username}:{' '}
+                <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
                   {msg.message}
-                </span>{" "}
+                </span>{' '}
               </span>
             </div>
           ))}
@@ -256,10 +223,7 @@ const CashGame = ({
           />
           <div className="input-group-append">
             <span className="input-group-text bg-white" id="basic-addon2">
-              <i
-                className="fa text-success fa-paper-plane"
-                aria-hidden="true"
-              ></i>
+              <i className="fa text-success fa-paper-plane" aria-hidden="true"></i>
             </span>
           </div>
         </div>
@@ -279,21 +243,21 @@ const CashGame = ({
     });
   };
   const copyLink = () => {
-    const tmp_tag = document.createElement("input");
-    tmp_tag.value = apiConfig.app + "/games/cash/" + table.id;
+    const tmp_tag = document.createElement('input');
+    tmp_tag.value = apiConfig.app + '/games/cash/' + table.id;
     reference.current.appendChild(tmp_tag);
     tmp_tag.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     reference.current.removeChild(tmp_tag);
-    handleToast("Address copied!", success);
+    handleToast('Address copied!', success);
   };
   useEffect(() => {
     if (credential.loginToken) {
       setSocket(
         io(apiConfig.endPoint, {
           auth: {
-            token: credential.loginToken,
-          },
+            token: credential.loginToken
+          }
         })
       );
     } else {
@@ -301,19 +265,16 @@ const CashGame = ({
     }
   }, [credential.loginToken]);
   useEffect(() => {
-    if (table)
-      setLoading(
-        table.players.filter((ele) => ele != null && !ele.stand).length
-      );
+    if (table) setLoading(table.players.filter((ele) => ele != null && !ele.stand).length);
     return () => {};
-  }, [table.players]);
+  }, [table?.players]);
   useEffect(() => {
     if (socket) {
-      socket.on("connect", () => {
+      socket.on('connect', () => {
         // when connection started
-        console.log("connect");
+        console.log('connect');
       });
-      socket.on("message", (res) => {
+      socket.on('message', (res) => {
         if (res.message) {
           handleToast(res.message, success);
         }
@@ -322,7 +283,7 @@ const CashGame = ({
         }
       });
 
-      socket.emit("cash:enter", match.params.room, (res) => {
+      socket.emit('cash:enter', match.params.room, (res) => {
         setTable(res.cashGame);
         setBuyIn(res.cashGame.buyIn[0]);
         console.log(res.cashGame);
@@ -330,7 +291,7 @@ const CashGame = ({
           (ele) => ele != null && ele.user.id == credential.loginUserId
         );
 
-        console.log("enter emit");
+        console.log('enter emit');
         if (id > -1) {
           setMySeat(id);
           if (res.cashGame.allowedBet) {
@@ -342,23 +303,23 @@ const CashGame = ({
           }
         }
       });
-      socket.on("connect_error", (err) => {
-        console.error("cash:error");
+      socket.on('connect_error', (err) => {
+        console.error('cash:error');
         console.error(err.message);
       });
-      socket.on("cash:join", ({ playerNo, player }) => {
-        console.log("cash join");
+      socket.on('cash:join', ({ playerNo, player }) => {
+        console.log('cash join');
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[playerNo] = player;
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("cash:start", ({ cashGame }) => {
-        console.log("cash start");
+      socket.on('cash:start', ({ cashGame }) => {
+        console.log('cash start');
         console.log(cashGame.players);
         let id = cashGame.players.findIndex(
           (ele) => ele != null && ele.user.id == credential.loginUserId
@@ -370,7 +331,7 @@ const CashGame = ({
           !cashGame.players[id].stand
         ) {
           setMySeat(id);
-          socket.emit("cash:showMyCards", match.params.room, ({ cards }) => {
+          socket.emit('cash:showMyCards', match.params.room, ({ cards }) => {
             setTable((table) => {
               const players = JSON.parse(JSON.stringify(table.players));
               console.log(cards);
@@ -378,7 +339,7 @@ const CashGame = ({
               console.log(players);
               return {
                 ...table,
-                players,
+                players
               };
             });
           });
@@ -387,8 +348,8 @@ const CashGame = ({
 
         setProgress(100);
       });
-      socket.on("cash:turn", ({ position, time, amount }) => {
-        console.log("cash:turn");
+      socket.on('cash:turn', ({ position, time, amount }) => {
+        console.log('cash:turn');
         setTable((table) => {
           const newPlayers = table.players.map((ele) => {
             if (ele != null) {
@@ -408,59 +369,56 @@ const CashGame = ({
           setProgress((table.turnTime * 1000 - time) / (table.turnTime * 10));
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on(
-        "cash:bet",
-        ({ position, bet, balance, fold, allIn, stand, pot, raise, call }) => {
-          console.log("cash:bet");
-          console.log({
-            position,
-            bet,
-            balance,
-            fold,
-            allIn,
-            stand,
-            pot,
-            raise,
-          });
-          setTable((table) => {
-            const newPlayers = JSON.parse(JSON.stringify(table.players));
-            newPlayers[position].bet = bet;
-            newPlayers[position].balance = balance;
-            newPlayers[position].fold = fold;
-            newPlayers[position].allIn = allIn;
-            newPlayers[position].stand = stand;
-            newPlayers[position].pot = pot;
-            newPlayers[position].turn = false;
-            newPlayers[position].raise = raise;
-            newPlayers[position].call = call;
-            console.log(newPlayers[position]);
-            return {
-              ...table,
-              players: newPlayers,
-            };
-          });
-          setEventPositions([position]);
-        }
-      );
-      socket.on("cash:stand", ({ position }) => {
+      socket.on('cash:bet', ({ position, bet, balance, fold, allIn, stand, pot, raise, call }) => {
+        console.log('cash:bet');
+        console.log({
+          position,
+          bet,
+          balance,
+          fold,
+          allIn,
+          stand,
+          pot,
+          raise
+        });
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
-          newPlayers[position].stand = 1;
-          console.log("cash:stand");
-          console.log(position);
-          console.log(newPlayers);
+          newPlayers[position].bet = bet;
+          newPlayers[position].balance = balance;
+          newPlayers[position].fold = fold;
+          newPlayers[position].allIn = allIn;
+          newPlayers[position].stand = stand;
+          newPlayers[position].pot = pot;
+          newPlayers[position].turn = false;
+          newPlayers[position].raise = raise;
+          newPlayers[position].call = call;
+          console.log(newPlayers[position]);
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
         setEventPositions([position]);
       });
-      socket.on("cash:card", ({ tableCards, pot }) => {
+      socket.on('cash:stand', ({ position }) => {
+        setTable((table) => {
+          const newPlayers = JSON.parse(JSON.stringify(table.players));
+          newPlayers[position].stand = 1;
+          console.log('cash:stand');
+          console.log(position);
+          console.log(newPlayers);
+          return {
+            ...table,
+            players: newPlayers
+          };
+        });
+        setEventPositions([position]);
+      });
+      socket.on('cash:card', ({ tableCards, pot }) => {
         console.log(tableCards);
         setTimeout(() => {
           setEventPositions([]);
@@ -480,50 +438,51 @@ const CashGame = ({
             ...table,
             tableCards,
             pot,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("cash:open", (cashGame) => {
-        console.log("open");
+      socket.on('cash:open', (cashGame) => {
+        console.log('open');
         console.log(cashGame);
         setTable(cashGame);
       });
-      socket.on("cash:result", (cashGame, status0, status1) => {
-        console.log("result");
+      socket.on('cash:result', (cashGame, status0, status1) => {
+        console.log('result');
         console.log(cashGame);
         setWinnerText(status0);
         setResultText(status1);
         setTable(cashGame);
       });
 
-      socket.on("cash:closed", () => {
-        history.push("/lobby");
+      socket.on('cash:closed', () => {
+        history.push('/lobby');
       });
-      socket.on("cash:sit", ({ position }) => {
+      socket.on('cash:sit', ({ position }) => {
         setTable((table) => {
+          console.log('tabletabletabletable', table);
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position].stand = false;
-          console.log("cash:sit");
+          console.log('cash:sit');
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("cash:leave", ({ position }) => {
+      socket.on('cash:leave', ({ position }) => {
         setTable((table) => {
           const newPlayers = JSON.parse(JSON.stringify(table.players));
           newPlayers[position] = null;
-          console.log("cash:leave");
+          console.log('cash:leave');
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("cash:playersOut", (positions) => {
-        console.log("cash:out");
+      socket.on('cash:playersOut', (positions) => {
+        console.log('cash:out');
         console.log(positions);
         setEventPositions(positions);
         setTable((table) => {
@@ -537,11 +496,11 @@ const CashGame = ({
           console.log(newPlayers);
           return {
             ...table,
-            players: newPlayers,
+            players: newPlayers
           };
         });
       });
-      socket.on("chat:receive", (message) => {
+      socket.on('chat:receive', (message) => {
         setMessageList((list) => {
           return [...list, message];
         });
@@ -555,6 +514,7 @@ const CashGame = ({
   useEffect(() => {
     setChatOpen(!status.mobileView);
   }, [status.mobileView]);
+  console.log('table', table);
 
   return (
     <div className="game-page">
@@ -562,15 +522,15 @@ const CashGame = ({
       <div className={classes.root}>
         <Drawer
           variant="persistent"
-          anchor={"left"}
+          anchor={'left'}
           open={chatOpen}
           onClose={() => setChatOpen(!chatOpen)}
           classes={{
-            paper: classes.drawerPaper,
+            paper: classes.drawerPaper
           }}
           className={classes.drawer}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true // Better open performance on mobile.
           }}
         >
           {gameChat}
@@ -580,13 +540,13 @@ const CashGame = ({
             onClick={() => setChatOpen(!chatOpen)}
             color="tumblr"
             style={{
-              position: "absolute",
-              right: "-31px",
-              borderTopRightRadius: "10px",
-              borderBottomRightRadius: "10px",
-              borderTopLeftRadius: "0px",
-              borderBottomLeftRadius: "0px",
-              padding: "4px",
+              position: 'absolute',
+              right: '-31px',
+              borderTopRightRadius: '10px',
+              borderBottomRightRadius: '10px',
+              borderTopLeftRadius: '0px',
+              borderBottomLeftRadius: '0px',
+              padding: '4px'
             }}
           >
             <AiFillWechat />
@@ -597,16 +557,13 @@ const CashGame = ({
           className={clsx(
             classes.content,
             {
-              [classes.contentShift]: chatOpen,
+              [classes.contentShift]: chatOpen
             },
             classes[`table_${table.tableSize}`]
           )}
         >
           <div className={classes.menu_bar}>
-            <Button
-              justIcon
-              onClick={(event) => setMainMenu(event.currentTarget)}
-            >
+            <Button justIcon onClick={(event) => setMainMenu(event.currentTarget)}>
               <MdMenu />
             </Button>
             <Menu
@@ -622,18 +579,14 @@ const CashGame = ({
             </Menu>
             <div className={classes.balance_pad}>
               <span>
-                Balance : {showDot(credential.loginUserPivx)}{" "}
-                <small>satoshi</small>
+                Balance : {showDot(credential.loginUserPivx)} <small>satoshi</small>
               </span>
-              {table &&
-              table.players[mySeat] &&
-              table.players[mySeat].balance ? (
+              {table && table.players[mySeat] && table.players[mySeat].balance ? (
                 <span>
-                  In Play : {showDot(table.players[mySeat].balance)}{" "}
-                  <small>satoshi</small>
+                  In Play : {showDot(table.players[mySeat].balance)} <small>satoshi</small>
                 </span>
               ) : (
-                ""
+                ''
               )}
             </div>
           </div>
@@ -649,11 +602,10 @@ const CashGame = ({
                         key={key}
                         className={clsx(
                           {
-                            "right-hand":
-                              key < Math.ceil(table.tableSize / 2) && key != 0,
-                            stand: ele != null && ele.stand,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            stand: ele != null && ele.stand
                           },
-                          "users-on-board"
+                          'users-on-board'
                         )}
                       >
                         <Button
@@ -669,13 +621,13 @@ const CashGame = ({
                           <div
                             className={clsx(
                               classes.eventPlayer,
-                              "animate__animated animate__fadeOutUp animate__slow"
+                              'animate__animated animate__fadeOutUp animate__slow'
                             )}
                           >
                             Out
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </div>
                     );
@@ -685,11 +637,10 @@ const CashGame = ({
                         key={key}
                         className={clsx(
                           {
-                            "right-hand":
-                              key < Math.ceil(table.tableSize / 2) && key != 0,
-                            stand: ele != null && ele.stand,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            stand: ele != null && ele.stand
                           },
-                          "users-on-board"
+                          'users-on-board'
                         )}
                         onClick={(event) => {
                           if (key == mySeat) setStandMenu(event.currentTarget);
@@ -705,9 +656,7 @@ const CashGame = ({
                               </div>
                             ))}
                           </div>
-                          <div className="chips-amount total">
-                            {ele.bet > 0 ? ele.bet : ""}
-                          </div>
+                          <div className="chips-amount total">{ele.bet > 0 ? ele.bet : ''}</div>
                         </div>
 
                         {ele.ready == true &&
@@ -717,60 +666,42 @@ const CashGame = ({
                           ele.win ? (
                             <div className="player-cards animate__animated animate__heartBeat animate__repeat-3 animate__slower">
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[0] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[0] + ''), 'choosen-card')}
                               </div>
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[1] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[1] + ''), 'choosen-card')}
                               </div>
                             </div>
                           ) : (
                             <div className="player-cards animate__animated animate__fadeInUp">
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[0] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[0] + ''), 'choosen-card')}
                               </div>
                               <div className="cards">
-                                {getCards(
-                                  getCardSrc(ele.cards[1] + ""),
-                                  "choosen-card"
-                                )}
+                                {getCards(getCardSrc(ele.cards[1] + ''), 'choosen-card')}
                               </div>
                             </div>
                           )
                         ) : (
-                          ""
+                          ''
                         )}
 
                         <div className="user-info">
                           <span>{ele.user.username}</span>
-                          <span className={classes.balance}>
-                            {" "}
-                            {showKilo(ele.balance)}
-                          </span>
+                          <span className={classes.balance}> {showKilo(ele.balance)}</span>
                         </div>
                         {ele.turn && ele.ready && !ele.stand ? (
                           <div className={classes.progressBar}>
-                            <LinearProgress
-                              variant="determinate"
-                              value={progress}
-                            />
+                            <LinearProgress variant="determinate" value={progress} />
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                         {ele.avatar ? (
                           <img
                             src={`${apiConfig.api}/uploads/avatars/${ele.avatar}`}
                             alt="A"
-                            className={clsx(classes.userAvatar, "user-avatar")}
+                            className={clsx(classes.userAvatar, 'user-avatar')}
                           />
                         ) : (
                           <Avatar
@@ -791,7 +722,7 @@ const CashGame = ({
                             round="80px"
                           />
                         ) : (
-                          ""
+                          ''
                         )}
                         {
                           //   ele.user.id === credential.loginUserId ? (
@@ -810,42 +741,42 @@ const CashGame = ({
                           <div
                             className={clsx(
                               classes.eventPlayer,
-                              "animate__animated animate__fadeOutUp animate__slow"
+                              'animate__animated animate__fadeOutUp animate__slow'
                             )}
                           >
                             {ele.stand
-                              ? "Stand"
+                              ? 'Stand'
                               : ele.fold
-                              ? "Fold"
+                              ? 'Fold'
                               : ele.allIn
-                              ? "All In"
+                              ? 'All In'
                               : ele.raise
-                              ? "Raise"
+                              ? 'Raise'
                               : ele.call
-                              ? "Call"
-                              : "Check"}
+                              ? 'Call'
+                              : 'Check'}
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                         {ele.win ? (
                           <div
                             className={clsx(
                               classes.eventPlayer,
                               classes.winEvent,
-                              "animate__animated animate__fadeOutUp animate__slower"
+                              'animate__animated animate__fadeOutUp animate__slower'
                             )}
                           >
                             {ranks[ele.rank]}
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </div>
                     );
                   }
                 })
-              : ""}
+              : ''}
             <Menu
               id="simple-menu"
               anchorEl={standMenu}
@@ -859,8 +790,8 @@ const CashGame = ({
                 mySeat > -1 &&
                 table.players[mySeat] != null &&
                 table.players[mySeat].stand
-                  ? "Sit"
-                  : "Stand"}
+                  ? 'Sit'
+                  : 'Stand'}
               </MenuItem>
               <MenuItem onClick={leaveTable}>Leave</MenuItem>
             </Menu>
@@ -881,18 +812,18 @@ const CashGame = ({
                 </React.Fragment>
               )}
             </div>
-            <div className={classes.table_cards + " table-cards"}>
+            <div className={classes.table_cards + ' table-cards'}>
               <div className="card-center-possition">
                 {table.tableCards
                   ? table.tableCards.map((ele, key) => (
                       <React.Fragment key={key}>
                         {getCards(
-                          getCardSrc(ele + ""),
-                          "card-size animate__animated animate__flipInY"
+                          getCardSrc(ele + ''),
+                          'card-size animate__animated animate__flipInY'
                         )}
                       </React.Fragment>
                     ))
-                  : ""}
+                  : ''}
               </div>
               <div className="chips-pad">
                 <div className="chip-stacks">
@@ -904,24 +835,14 @@ const CashGame = ({
                     </div>
                   ))}
                 </div>
-                <div className="chips-amount total">
-                  {table.pot > 0 ? table.pot : ""}
-                </div>
+                <div className="chips-amount total">{table.pot > 0 ? table.pot : ''}</div>
               </div>
             </div>
             <Hidden xsDown>
-              <img
-                className={classes.background}
-                src={PokerTable}
-                alt="Table"
-              />
+              <img className={classes.background} src={PokerTable} alt="Table" />
             </Hidden>
             <Hidden smUp>
-              <img
-                className={classes.background}
-                src={PokerTableMobile}
-                alt="Table"
-              />
+              <img className={classes.background} src={PokerTableMobile} alt="Table" />
             </Hidden>
           </div>
           {table &&
@@ -931,30 +852,28 @@ const CashGame = ({
           !table.players[mySeat].stand ? (
             table.players[mySeat].turn ? (
               <div className={classes.control_pad}>
-                <Button color="warning" onClick={() => bet("fold")}>
+                <Button color="warning" onClick={() => bet('fold')}>
                   Fold
                 </Button>
-                {callStatus == "allIn" ? (
-                  <Button color="danger" onClick={() => bet("allIn")}>
+                {callStatus == 'allIn' ? (
+                  <Button color="danger" onClick={() => bet('allIn')}>
                     All In
                   </Button>
-                ) : callStatus == "allIn_minRaise" ? (
+                ) : callStatus == 'allIn_minRaise' ? (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
+                    <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0
-                        ? "Call " + (call - table.players[mySeat].bet)
-                        : "Check"}
+                        ? 'Call ' + (call - table.players[mySeat].bet)
+                        : 'Check'}
                     </Button>
-                    <Button color="danger" onClick={() => bet("allIn")}>
+                    <Button color="danger" onClick={() => bet('allIn')}>
                       All In
                     </Button>
                   </React.Fragment>
-                ) : callStatus == "allIn_maxRaise" ? (
+                ) : callStatus == 'allIn_maxRaise' ? (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
-                      {call - table.players[mySeat].bet > 0
-                        ? "Call " + call
-                        : "Check"}
+                    <Button color="info" onClick={() => bet('call', call)}>
+                      {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
                     </Button>
                     <Button
                       justIcon
@@ -973,7 +892,7 @@ const CashGame = ({
                       getAriaValueText={(val) => val}
                       min={minRaise}
                       max={maxRaise}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.slider}
                     />
                     <Button
@@ -986,24 +905,19 @@ const CashGame = ({
                       <AiOutlinePlus />
                     </Button>
                     {raise == maxRaise ? (
-                      <Button color="danger" onClick={() => bet("allIn")}>
+                      <Button color="danger" onClick={() => bet('allIn')}>
                         All In
                       </Button>
                     ) : (
-                      <Button
-                        color="primary"
-                        onClick={() => bet("call", raise)}
-                      >
+                      <Button color="primary" onClick={() => bet('call', raise)}>
                         Raise ({raise})
                       </Button>
                     )}
                   </React.Fragment>
                 ) : (
                   <React.Fragment>
-                    <Button color="info" onClick={() => bet("call", call)}>
-                      {call - table.players[mySeat].bet > 0
-                        ? "Call " + call
-                        : "Check"}
+                    <Button color="info" onClick={() => bet('call', call)}>
+                      {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
                     </Button>
                     <Button
                       justIcon
@@ -1022,7 +936,7 @@ const CashGame = ({
                       getAriaValueText={(val) => val}
                       min={minRaise}
                       max={maxRaise}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.slider}
                     />
                     <Button
@@ -1034,7 +948,7 @@ const CashGame = ({
                     >
                       <AiOutlinePlus />
                     </Button>
-                    <Button color="primary" onClick={() => bet("call", raise)}>
+                    <Button color="primary" onClick={() => bet('call', raise)}>
                       Raise ({raise})
                     </Button>
                   </React.Fragment>
@@ -1054,7 +968,7 @@ const CashGame = ({
               </div>
             )
           ) : (
-            ""
+            ''
           )}
 
           {!chatOpen ? (
@@ -1063,19 +977,19 @@ const CashGame = ({
               onClick={() => setChatOpen(true)}
               color="behance"
               style={{
-                position: "absolute",
-                left: "0px",
-                borderTopRightRadius: "10px",
-                borderBottomRightRadius: "10px",
-                borderTopLeftRadius: "0px",
-                borderBottomLeftRadius: "0px",
-                padding: "4px",
+                position: 'absolute',
+                left: '0px',
+                borderTopRightRadius: '10px',
+                borderBottomRightRadius: '10px',
+                borderTopLeftRadius: '0px',
+                borderBottomLeftRadius: '0px',
+                padding: '4px'
               }}
             >
               <AiFillWechat />
             </Button>
           ) : (
-            ""
+            ''
           )}
         </div>
         {table && table.privacy ? (
@@ -1087,7 +1001,7 @@ const CashGame = ({
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
-              timeout: 500,
+              timeout: 500
             }}
             className={classes.modal}
           >
@@ -1107,8 +1021,7 @@ const CashGame = ({
                 </h4>
                 <Grid container spacing={3}>
                   <Grid item className={classes.modal_center}>
-                    <h5>
-                    </h5>
+                    <h5></h5>
                   </Grid>
                 </Grid>
                 <Grid container spacing={3}>
@@ -1122,7 +1035,7 @@ const CashGame = ({
                       justIcon
                       round
                       size="sm"
-                      style={{ marginRight: "10px" }}
+                      style={{ marginRight: '10px' }}
                       className={classes.simpleButton}
                       onClick={() =>
                         setBuyIn((prev) => {
@@ -1144,16 +1057,16 @@ const CashGame = ({
                           ? credential.loginUserPivx
                           : table.buyIn[1]
                       }
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.modal_slider}
-                      style={{ width: "70%" }}
+                      style={{ width: '70%' }}
                     />
                     <Button
                       justIcon
                       round
                       size="sm"
                       className={classes.simpleButton}
-                      style={{ marginLeft: "10px" }}
+                      style={{ marginLeft: '10px' }}
                       onClick={() =>
                         setBuyIn((prev) => {
                           return buyIn <
@@ -1179,18 +1092,14 @@ const CashGame = ({
                         autoComplete="current-password"
                         InputProps={{
                           value: password,
-                          onChange: (e) => setPassword(e.target.value),
+                          onChange: (e) => setPassword(e.target.value)
                         }}
-                      />{" "}
+                      />{' '}
                     </FormControl>
                   </Grid>
                 </Grid>
                 <Grid container spacing={3} className="mt-3">
-                  <Button
-                    color="primary"
-                    style={{ margin: "auto auto" }}
-                    onClick={joinTable}
-                  >
+                  <Button color="primary" style={{ margin: 'auto auto' }} onClick={joinTable}>
                     O K
                   </Button>
                 </Grid>
@@ -1206,7 +1115,7 @@ const CashGame = ({
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
-              timeout: 500,
+              timeout: 500
             }}
             className={classes.modal}
           >
@@ -1226,8 +1135,7 @@ const CashGame = ({
                 </h4>
                 <Grid container spacing={3}>
                   <Grid item className={classes.modal_center}>
-                    <h5>
-                    </h5>
+                    <h5></h5>
                   </Grid>
                 </Grid>
                 <Grid container spacing={3}>
@@ -1241,7 +1149,7 @@ const CashGame = ({
                       justIcon
                       round
                       size="sm"
-                      style={{ marginRight: "10px" }}
+                      style={{ marginRight: '10px' }}
                       className={classes.simpleButton}
                       onClick={() =>
                         setBuyIn((prev) => {
@@ -1263,16 +1171,16 @@ const CashGame = ({
                           ? credential.loginUserPivx
                           : table.buyIn[1]
                       }
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.modal_slider}
-                      style={{ width: "70%" }}
+                      style={{ width: '70%' }}
                     />
                     <Button
                       justIcon
                       round
                       size="sm"
                       className={classes.simpleButton}
-                      style={{ marginLeft: "10px" }}
+                      style={{ marginLeft: '10px' }}
                       onClick={() =>
                         setBuyIn((prev) => {
                           return buyIn <
@@ -1289,11 +1197,7 @@ const CashGame = ({
                   </Grid>
                 </Grid>
                 <Grid container spacing={3} className="mt-3">
-                  <Button
-                    color="primary"
-                    style={{ margin: "auto auto" }}
-                    onClick={joinTable}
-                  >
+                  <Button color="primary" style={{ margin: 'auto auto' }} onClick={joinTable}>
                     O K
                   </Button>
                 </Grid>
@@ -1301,7 +1205,7 @@ const CashGame = ({
             </Fade>
           </Modal>
         ) : (
-          ""
+          ''
         )}
         {table ? (
           <Modal
@@ -1312,7 +1216,7 @@ const CashGame = ({
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
-              timeout: 500,
+              timeout: 500
             }}
             className={classes.modal}
           >
@@ -1369,8 +1273,7 @@ const CashGame = ({
                     Players:
                   </Grid>
                   <Grid item xs={6} className={classes.modal_field}>
-                    {table.players.filter((ele) => ele != null).length}/
-                    {table.tableSize}
+                    {table.players.filter((ele) => ele != null).length}/{table.tableSize}
                   </Grid>
                 </Grid>
 
@@ -1379,7 +1282,7 @@ const CashGame = ({
                     Limit:
                   </Grid>
                   <Grid item xs={6} className={classes.modal_field}>
-                    {table.limit ? "Pot Limit" : "No Limit"}
+                    {table.limit ? 'Pot Limit' : 'No Limit'}
                   </Grid>
                 </Grid>
 
@@ -1404,7 +1307,7 @@ const CashGame = ({
             </Fade>
           </Modal>
         ) : (
-          ""
+          ''
         )}
       </div>
     </div>
@@ -1419,11 +1322,9 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
       PIVXChange: global.Actions.LoginAction.PIVXChange,
-      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess,
+      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess
     },
     dispatch
   );
 };
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(CashGame)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CashGame));
