@@ -25,7 +25,6 @@ const LoginReducer = (state = INITIAL_STATE, action) => {
   let loginUserShieldWalletAddress;
   let loginUserAvatar;
   let loginUserLevel;
-  let loginUserEmail;
   let data;
 
   switch (action.type) {

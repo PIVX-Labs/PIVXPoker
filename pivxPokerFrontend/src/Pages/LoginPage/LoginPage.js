@@ -1,13 +1,13 @@
-import { useHistory, useRouter } from "react-router-dom";
-import styled from "styled-components";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import HomePageLayoutContainer from "../../Components/HomePage/HomePageLayoutContainer";
-import Button from "../../StyledComponents/Button";
-import Input from "../../StyledComponents/Input";
-import TextLarge from "../../StyledComponents/TextLarge";
-import { useEffect, useState } from "react";
-import handleToast, { success } from "../../Components/toast";
+import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+import HomePageLayoutContainer from '../../Components/HomePage/HomePageLayoutContainer';
+import handleToast from '../../Components/toast';
+import Button from '../../StyledComponents/Button';
+import Input from '../../StyledComponents/Input';
+import TextLarge from '../../StyledComponents/TextLarge';
 export const MainFormButtonContainer = styled.div`
   display: grid;
   grid-column-gap: 1rem;
@@ -27,15 +27,15 @@ export const MainFormContainer = styled.div`
 const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
   const history = useHistory();
   const { apiConfig, ApiCall } = global;
-  let [userName, setUserName] = useState("");
-  let [password, setPassword] = useState("");
+  let [userName, setUserName] = useState('');
+  let [password, setPassword] = useState('');
 
   const loginValidation = () => {
-    if (userName == null || userName == "") {
+    if (userName == null || userName == '') {
       handleToast("Name can't be blank");
       return false;
     } else if (password.length < 6) {
-      handleToast("Please Enter Password");
+      handleToast('Please Enter Password');
       return false;
     } else {
       return true;
@@ -44,7 +44,7 @@ const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
   useEffect(() => {
     console.log(credential);
     if (credential && credential.loginToken) {
-      history.push("/lobby");
+      history.push('/lobby');
     }
   }, [credential]);
 
@@ -54,19 +54,19 @@ const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
         username: userName,
         password: password,
         forceLogin: false,
-        appVersion: "1.0",
-        device_id: "n/a",
-        AppId: "",
-        fcmId: "",
-        os: "other",
-        productName: "BytePoker",
+        appVersion: '1.0',
+        device_id: 'n/a',
+        AppId: '',
+        fcmId: '',
+        os: 'other',
+        productName: 'BytePoker'
       };
       try {
         const response = await ApiCall(
           apiConfig[apiConfig.currentEnv],
           apiConfig.authenticate.url,
           apiConfig.authenticate.method,
-          "",
+          '',
           payLoad
         );
         if (response.status === 200) {
@@ -77,7 +77,7 @@ const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
         }
       } catch (error) {
         if (error.response) handleToast(error.response.data.message);
-        else handleToast("Request Failed!");
+        else handleToast('Request Failed!');
         LogOutSuccess();
       }
     }
@@ -104,7 +104,7 @@ const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
         <Button onClick={() => handleLogin()} variant="green">
           <TextLarge>Login</TextLarge>
         </Button>
-        <Button onClick={() => history.push("/")} variant="red">
+        <Button onClick={() => history.push('/')} variant="red">
           <TextLarge>Cancel</TextLarge>
         </Button>
       </MainFormButtonContainer>
@@ -120,7 +120,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
       LoginSuccess: global.Actions.LoginAction.LoginSuccess,
-      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess,
+      LogOutSuccess: global.Actions.LoginAction.LogOutSuccess
     },
     dispatch
   );
