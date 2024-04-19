@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const Visited = require('../models/visited');
 
-const jwtDecode = require('jwt-decode');
+const { jwtDecode } = require('jwt-decode');
 const { body, validationResult } = require('express-validator');
 const { getNewAddress, getNewShieldAddress } = require('../utils/pivx');
 const { createToken, hashPassword, verifyPassword } = require('../utils/authentication');
@@ -48,7 +48,7 @@ exports.signup = async (req, res) => {
     console.log(respond);
     if (respond && respond.error == null) {
       userData.address = respond.result;
-      
+
       const respondShield = await getNewShieldAddress();
       if (respondShield && respondShield.error == null) {
         userData.shieldaddress = respondShield.result;
