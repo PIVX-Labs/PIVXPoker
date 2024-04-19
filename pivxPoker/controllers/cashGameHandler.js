@@ -320,7 +320,8 @@ module.exports = (io, socket, cashGames) => {
         alive = i;
       if (player != null) {
         let win = player.balance - player.originBalance;
-        let bonus = win > 0 ? Math.floor(win / ((100 - cashRakes.find((ele) => ele.blinds == cashGame.blinds).rake)*2)) : 0;       
+        let bonus = win > 0 ? Math.floor(win / ((100 - cashRakes.find((ele) => ele.blinds == cashGame.blinds).rake)*2)) : 0;     
+        console.log("bonus" + bonus)  
         let financial = {};
         financial.type = 'Game';
         financial.amount = win;

@@ -1,53 +1,47 @@
-import styled from "styled-components";
-import React, { useEffect, useState } from "react";
-import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import Slider from "@material-ui/core/Slider";
-import Input from "@material-ui/core/Input";
-import handleToast, { success } from "../../Components/toast";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import Paper from "@material-ui/core/Paper";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import { useHistory } from "react-router-dom";
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
+import Slider from '@material-ui/core/Slider';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+import handleToast from '../../Components/toast';
 
+import Backdrop from '@material-ui/core/Backdrop';
+import Checkbox from '@material-ui/core/Checkbox';
+import Fade from '@material-ui/core/Fade';
+import Modal from '@material-ui/core/Modal';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import {
-  blindsList,
-  turnTimeList,
-  sitTableSizeList,
+  AiOutlineArrowDown,
+  AiOutlineArrowUp,
+  AiOutlineCheck,
+  AiOutlineClose,
+  AiTwotoneLock
+} from 'react-icons/ai';
+import Button from '../../Components/Button';
+import lobbyStyle from '../../jss/pages/lobbyStyle';
+import {
   sitBlindList,
   sitStartingStack,
-} from "../../shared/constants";
-import {
-  AiOutlineClose,
-  AiOutlineArrowUp,
-  AiOutlineArrowDown,
-  AiTwotoneLock,
-  AiOutlineCheck,
-} from "react-icons/ai";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import Button from "../../Components/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import {
-  showKilo,
-  showTurnTime,
-  showTableSize,
-  showDot,
-} from "../../shared/printConfig";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import lobbyStyle from "../../jss/pages/lobbyStyle";
+  sitTableSizeList,
+  turnTimeList
+} from '../../shared/constants';
+import { showDot, showKilo, showTableSize, showTurnTime } from '../../shared/printConfig';
 
 const useStyles = makeStyles(lobbyStyle);
 
@@ -77,8 +71,8 @@ const TableItem = styled.div`
 
 export const TableHeadItem = styled(TableItem)`
   color: #ffffff;
-  background: #662D91;
-  box-shadow: 2px 3px 1px rgba(0,0,0,0.4);
+  background: #662d91;
+  box-shadow: 2px 3px 1px rgba(0, 0, 0, 0.4);
   text-transform: uppercase;
   width: 100%;
   text-align: center;
@@ -96,30 +90,30 @@ const PanelTableRow = styled(TableHeadRow)`
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    color: theme.palette.common.white
   },
   body: {
-    fontSize: 14,
-  },
+    fontSize: 14
+  }
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover
+    }
+  }
 }))(TableRow);
 
-const headings = ["Name", "Buy In", "Prize Pool", "Players", "Status"];
+const headings = ['Name', 'Buy In', 'Prize Pool', 'Players', 'Status'];
 
 const SitnGoTable = (props) => {
-  const history=useHistory();
+  const history = useHistory();
 
   const { apiConfig } = global;
   const classes = useStyles();
   const [createModal, setCreateModal] = React.useState(false);
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState('');
   const [turnTime, setTurnTime] = useState(turnTimeList[0]);
   const [tableSize, setTableSize] = useState(9);
   const [startingStack, setStartingStack] = useState(500);
@@ -127,33 +121,31 @@ const SitnGoTable = (props) => {
   const [blindSchedule, setBlindSchedule] = useState(4);
   const [buyIn, setBuyIn] = useState(100);
   const [privacy, setPrivacy] = useState(false);
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [tableItems, setTableItems] = useState(props.sitGames);
-  const [firstPlace, setFirstPlace] = useState(
-    Math.floor(buyIn * tableSize * 0.95)
-  );
+  const [firstPlace, setFirstPlace] = useState(Math.floor(buyIn * tableSize * 0.95));
   const [secondPlace, setSecondPlace] = useState(0);
   const [thirdPlace, setThirdPlace] = useState(0);
   const handleSort = (text) => {
     if (sort.name === text) {
       setSort({
         name: text,
-        type: !sort.type,
+        type: !sort.type
       });
     } else {
       setSort({
         name: text,
-        type: true,
+        type: true
       });
     }
   };
   useEffect(() => {
-    setFirstPlace( Math.floor(buyIn * tableSize * 0.95))
+    setFirstPlace(Math.floor(buyIn * tableSize * 0.95));
   }, [tableSize, buyIn]);
 
   useEffect(() => {
-    console.log(props)
+    console.log(props);
     setTableItems(props.sitGames);
     //console.log(props.sitGames);
   }, [props.sitGames]);
@@ -162,7 +154,7 @@ const SitnGoTable = (props) => {
     const data = JSON.parse(JSON.stringify(tableItems));
     if (data.length > 0) {
       data.sort((a, b) => {
-        if (sort.name === "Name") {
+        if (sort.name === 'Name') {
           var x = a.name.toLowerCase();
           var y = b.name.toLowerCase();
           if (sort.type) {
@@ -182,7 +174,7 @@ const SitnGoTable = (props) => {
             }
             return 0;
           }
-        } else if (sort.name === "Buy In") {
+        } else if (sort.name === 'Buy In') {
           var x = a.buyIn;
           var y = b.buyIn;
           if (sort.type) {
@@ -202,9 +194,9 @@ const SitnGoTable = (props) => {
             }
             return 0;
           }
-        } else if (sort.name === "Prize Pool") {
-          var x = a.firstPlace+a.secondPlace+a.thirdPlace;
-          var y = b.firstPlace+b.secondPlace+b.thirdPlace;
+        } else if (sort.name === 'Prize Pool') {
+          var x = a.firstPlace + a.secondPlace + a.thirdPlace;
+          var y = b.firstPlace + b.secondPlace + b.thirdPlace;
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -222,7 +214,7 @@ const SitnGoTable = (props) => {
             }
             return 0;
           }
-        } else if (sort.name === "Players") {
+        } else if (sort.name === 'Players') {
           var x = parseInt(a.playersCount);
           var y = parseInt(b.playersCount);
           if (sort.type) {
@@ -242,7 +234,7 @@ const SitnGoTable = (props) => {
             }
             return 0;
           }
-        } else if (sort.name === "Status") {
+        } else if (sort.name === 'Status') {
           var x = a.status;
           var y = b.status;
           if (sort.type) {
@@ -269,7 +261,7 @@ const SitnGoTable = (props) => {
   }, [sort]);
   const createTable = () => {
     if (!name) {
-      handleToast("Please specify a name");
+      handleToast('Please specify a name');
       return;
     }
     console.log({
@@ -284,10 +276,10 @@ const SitnGoTable = (props) => {
       limit,
       buyIn,
       privacy,
-      password,
+      password
     });
     props.socket.emit(
-      "sit:create",
+      'sit:create',
       {
         name,
         turnTime,
@@ -300,12 +292,12 @@ const SitnGoTable = (props) => {
         limit,
         buyIn,
         privacy,
-        password,
+        password
       },
       (res) => {
         if (res.status == true) {
           props.PIVXChange(res.pivx);
-          history.push("/games/sit/" + res.id);
+          history.push('/games/sit/' + res.id);
         } else {
           handleToast(res.message);
         }
@@ -314,8 +306,7 @@ const SitnGoTable = (props) => {
     );
   };
   const goToGames = (id) => {
-    history.push("/games/sit/" + id);
-
+    history.push('/games/sit/' + id);
   };
   return (
     <TableWrapper>
@@ -330,7 +321,7 @@ const SitnGoTable = (props) => {
                 <AiOutlineArrowDown />
               )
             ) : (
-              ""
+              ''
             )}
           </TableHeadItem>
         ))}
@@ -344,49 +335,41 @@ const SitnGoTable = (props) => {
               item.current = ele.current;
               item.name = ele.name;
               item.buyIn = showKilo(ele.buyIn);
-              item.prizePool = showKilo(ele.firstPlace+ele.secondPlace+ele.thirdPlace);
-              item.tableSize = ele.playersCount + "/" + ele.tableSize;
+              item.prizePool = showKilo(ele.firstPlace + ele.secondPlace + ele.thirdPlace);
+              item.tableSize = ele.playersCount + '/' + ele.tableSize;
               item.status = ele.status;
               item.limit = ele.limit;
-              item.playing=ele.playing ? "Playing" : ele.closed ? "Closed" : "Registering";
+              item.playing = ele.playing ? 'Playing' : ele.closed ? 'Closed' : 'Registering';
               return item;
             })
             .map((item, i) => (
               <PanelTableRow key={item.id}>
                 <TableItem onClick={() => goToGames(item.id)}>
-                  {item.current ? <AiOutlineCheck /> : ""}{" "}
-                  {item.privacy ? <AiTwotoneLock /> : ""} {item.name + " "}
+                  {item.current ? <AiOutlineCheck /> : ''} {item.privacy ? <AiTwotoneLock /> : ''}{' '}
+                  {item.name + ' '}
                   {item.limit ? (
                     <small
                       style={{
-                        fontWeight: "100",
-                        fontStyle: "italic",
-                        fontSize: "10px",
+                        fontWeight: '100',
+                        fontStyle: 'italic',
+                        fontSize: '10px'
                       }}
                     >
                       ( Pot limited )
                     </small>
                   ) : (
-                    ""
+                    ''
                   )}
                 </TableItem>
-                <TableItem onClick={() => goToGames(item.id)}>
-                  {item.buyIn}
-                </TableItem>
-                <TableItem onClick={() => goToGames(item.id)}>
-                  {item.prizePool}
-                </TableItem>
-                <TableItem onClick={() => goToGames(item.id)}>
-                  {item.tableSize}
-                </TableItem>
-                <TableItem onClick={() => goToGames(item.id)}>
-                  {item.playing}
-                </TableItem>
+                <TableItem onClick={() => goToGames(item.id)}>{item.buyIn}</TableItem>
+                <TableItem onClick={() => goToGames(item.id)}>{item.prizePool}</TableItem>
+                <TableItem onClick={() => goToGames(item.id)}>{item.tableSize}</TableItem>
+                <TableItem onClick={() => goToGames(item.id)}>{item.playing}</TableItem>
               </PanelTableRow>
             ))
-        : ""}
+        : ''}
       <hr />
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: 'center' }}>
         <Button color="primary" round onClick={() => setCreateModal(true)}>
           Create Table
         </Button>
@@ -399,7 +382,7 @@ const SitnGoTable = (props) => {
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
-          timeout: 500,
+          timeout: 500
         }}
         className={classes.modal}
       >
@@ -421,18 +404,18 @@ const SitnGoTable = (props) => {
               id="standard-full-width"
               label="Table Name"
               inputProps={{
-                style: { fontSize: "30px" },
+                style: { fontSize: '30px' }
               }}
-              style={{ margin: 8, fontSize: "30px" }}
+              style={{ margin: 8, fontSize: '30px' }}
               helperText="Max Length is 10 character"
               fullWidth
               margin="normal"
               InputLabelProps={{
-                shrink: true,
+                shrink: true
               }}
               InputProps={{
                 value: name,
-                onChange: (e) => setName(e.target.value),
+                onChange: (e) => setName(e.target.value)
               }}
             />
             <Grid container spacing={3}>
@@ -441,23 +424,17 @@ const SitnGoTable = (props) => {
               </Grid>
               <Grid item xs={8} className={classes.modal_field}>
                 <FormControl className={classes.formControl}>
-                  <InputLabel id="demo-tableSize-select-label">
-                    Tabel Size
-                  </InputLabel>
+                  <InputLabel id="demo-tableSize-select-label">Tabel Size</InputLabel>
                   <Select
                     className={classes.modal_select}
                     labelId="demo-tableSize-select-label"
                     id="demo-tableSize-select"
                     value={tableSize}
                     onChange={(e) => setTableSize(e.target.value)}
-                    style={{ minWidth: "120px" }}
+                    style={{ minWidth: '120px' }}
                   >
                     {sitTableSizeList.map((ele, key) => (
-                      <MenuItem
-                        className={classes.modal_select_item}
-                        key={key}
-                        value={ele}
-                      >
+                      <MenuItem className={classes.modal_select_item} key={key} value={ele}>
                         {showTableSize(ele)}
                       </MenuItem>
                     ))}
@@ -472,23 +449,17 @@ const SitnGoTable = (props) => {
               </Grid>
               <Grid item xs={8} className={classes.modal_field}>
                 <FormControl className={classes.formControl}>
-                  <InputLabel id="demo-turnTime-select-label">
-                    Turn Time
-                  </InputLabel>
+                  <InputLabel id="demo-turnTime-select-label">Turn Time</InputLabel>
                   <Select
                     className={classes.modal_select}
                     labelId="demo-turnTime-select-label"
                     id="demo-turnTime-select"
                     value={turnTime}
                     onChange={(e) => setTurnTime(e.target.value)}
-                    style={{ minWidth: "120px" }}
+                    style={{ minWidth: '120px' }}
                   >
                     {turnTimeList.map((ele, key) => (
-                      <MenuItem
-                        className={classes.modal_select_item}
-                        key={key}
-                        value={ele}
-                      >
+                      <MenuItem className={classes.modal_select_item} key={key} value={ele}>
                         {showTurnTime(ele)}
                       </MenuItem>
                     ))}
@@ -503,23 +474,17 @@ const SitnGoTable = (props) => {
               </Grid>
               <Grid item xs={8} className={classes.modal_field}>
                 <FormControl className={classes.formControl}>
-                  <InputLabel id="demo-tableSize-select-label">
-                    Starting Stack
-                  </InputLabel>
+                  <InputLabel id="demo-tableSize-select-label">Starting Stack</InputLabel>
                   <Select
                     className={classes.modal_select}
                     labelId="demo-tableSize-select-label"
                     id="demo-tableSize-select"
                     value={startingStack}
                     onChange={(e) => setStartingStack(e.target.value)}
-                    style={{ minWidth: "120px" }}
+                    style={{ minWidth: '120px' }}
                   >
                     {sitStartingStack.map((ele, key) => (
-                      <MenuItem
-                        className={classes.modal_select_item}
-                        key={key}
-                        value={ele}
-                      >
+                      <MenuItem className={classes.modal_select_item} key={key} value={ele}>
                         {ele}
                       </MenuItem>
                     ))}
@@ -541,18 +506,12 @@ const SitnGoTable = (props) => {
                     id="demo-limit-select"
                     value={limit}
                     onChange={(e) => setLimit(e.target.value)}
-                    style={{ minWidth: "70px" }}
+                    style={{ minWidth: '70px' }}
                   >
-                    <MenuItem
-                      className={classes.modal_select_item}
-                      value={true}
-                    >
+                    <MenuItem className={classes.modal_select_item} value={true}>
                       Pot Limit
                     </MenuItem>
-                    <MenuItem
-                      className={classes.modal_select_item}
-                      value={false}
-                    >
+                    <MenuItem className={classes.modal_select_item} value={false}>
                       No Limit
                     </MenuItem>
                   </Select>
@@ -566,16 +525,14 @@ const SitnGoTable = (props) => {
               </Grid>
               <Grid item xs={8} className={classes.modal_field}>
                 <FormControl className={classes.formControl}>
-                  <InputLabel id="demo-blind-select-label">
-                    Blind Schedule
-                  </InputLabel>
+                  <InputLabel id="demo-blind-select-label">Blind Schedule</InputLabel>
                   <Select
                     className={classes.modal_select}
                     labelId="demo-blind-select-label"
                     id="demo-blind-select"
                     value={blindSchedule}
                     onChange={(e) => setBlindSchedule(e.target.value)}
-                    style={{ minWidth: "150px" }}
+                    style={{ minWidth: '150px' }}
                   >
                     <MenuItem className={classes.modal_select_item} value={4}>
                       Very Fast
@@ -598,15 +555,8 @@ const SitnGoTable = (props) => {
             </Grid>
 
             <Grid container spacing={3}>
-              <TableContainer
-                component={Paper}
-                className={classes.tableContainer}
-              >
-                <Table
-                  className={classes.table}
-                  size="small"
-                  aria-label="a dense table"
-                >
+              <TableContainer component={Paper} className={classes.tableContainer}>
+                <Table className={classes.table} size="small" aria-label="a dense table">
                   <TableHead>
                     <StyledTableRow>
                       <StyledTableCell>Blind</StyledTableCell>
@@ -619,9 +569,7 @@ const SitnGoTable = (props) => {
                         <StyledTableCell component="th" scope="row">
                           {showKilo(row.blinds)}
                         </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {row.duration}
-                        </StyledTableCell>
+                        <StyledTableCell align="right">{row.duration}</StyledTableCell>
                       </StyledTableRow>
                     ))}
                   </TableBody>
@@ -641,11 +589,11 @@ const SitnGoTable = (props) => {
                   type="number"
                   margin="normal"
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   InputProps={{
                     value: buyIn,
-                    onChange: (e) => setBuyIn(e.target.value),
+                    onChange: (e) => setBuyIn(e.target.value)
                   }}
                 />
               </Grid>
@@ -674,16 +622,9 @@ const SitnGoTable = (props) => {
                     <Slider
                       value={firstPlace}
                       onChange={(e, val) => {
-                        if (
-                          val >
-                          Math.floor(buyIn * tableSize * 0.95) -
-                            secondPlace -
-                            thirdPlace
-                        )
+                        if (val > Math.floor(buyIn * tableSize * 0.95) - secondPlace - thirdPlace)
                           setFirstPlace(
-                            Math.floor(buyIn * tableSize * 0.95) -
-                              secondPlace -
-                              thirdPlace
+                            Math.floor(buyIn * tableSize * 0.95) - secondPlace - thirdPlace
                           );
                         else setFirstPlace(val);
                       }}
@@ -692,7 +633,7 @@ const SitnGoTable = (props) => {
                       getAriaValueText={(val) => val}
                       min={0}
                       max={Math.floor(buyIn * tableSize * 0.95)}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.modal_slider}
                     />
                   </Grid>
@@ -703,16 +644,9 @@ const SitnGoTable = (props) => {
                       margin="dense"
                       onChange={(event) => {
                         let val = Number(event.target.value);
-                        if (
-                          val >
-                          Math.floor(buyIn * tableSize * 0.95) -
-                            secondPlace -
-                            thirdPlace
-                        )
+                        if (val > Math.floor(buyIn * tableSize * 0.95) - secondPlace - thirdPlace)
                           setFirstPlace(
-                            Math.floor(buyIn * tableSize * 0.95) -
-                              secondPlace -
-                              thirdPlace
+                            Math.floor(buyIn * tableSize * 0.95) - secondPlace - thirdPlace
                           );
                         else setFirstPlace(val);
                       }}
@@ -720,8 +654,8 @@ const SitnGoTable = (props) => {
                         step: 1,
                         min: 0,
                         max: Math.floor(buyIn * tableSize * 0.95),
-                        type: "number",
-                        "aria-labelledby": "input-slider",
+                        type: 'number',
+                        'aria-labelledby': 'input-slider'
                       }}
                     />
                   </Grid>
@@ -739,16 +673,9 @@ const SitnGoTable = (props) => {
                     <Slider
                       value={secondPlace}
                       onChange={(e, val) => {
-                        if (
-                          val >
-                          Math.floor(buyIn * tableSize * 0.95) -
-                            firstPlace -
-                            thirdPlace
-                        )
+                        if (val > Math.floor(buyIn * tableSize * 0.95) - firstPlace - thirdPlace)
                           setSecondPlace(
-                            Math.floor(buyIn * tableSize * 0.95) -
-                            firstPlace -
-                              thirdPlace
+                            Math.floor(buyIn * tableSize * 0.95) - firstPlace - thirdPlace
                           );
                         else setSecondPlace(val);
                       }}
@@ -757,7 +684,7 @@ const SitnGoTable = (props) => {
                       getAriaValueText={(val) => val}
                       min={0}
                       max={Math.floor(buyIn * tableSize * 0.95)}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.modal_slider}
                     />
                   </Grid>
@@ -768,16 +695,9 @@ const SitnGoTable = (props) => {
                       margin="dense"
                       onChange={(event) => {
                         let val = Number(event.target.value);
-                        if (
-                          val >
-                          Math.floor(buyIn * tableSize * 0.95) -
-                          firstPlace -
-                            thirdPlace
-                        )
+                        if (val > Math.floor(buyIn * tableSize * 0.95) - firstPlace - thirdPlace)
                           setSecondPlace(
-                            Math.floor(buyIn * tableSize * 0.95) -
-                            firstPlace -
-                              thirdPlace
+                            Math.floor(buyIn * tableSize * 0.95) - firstPlace - thirdPlace
                           );
                         else setSecondPlace(val);
                       }}
@@ -785,8 +705,8 @@ const SitnGoTable = (props) => {
                         step: 1,
                         min: 0,
                         max: Math.floor(buyIn * tableSize * 0.95),
-                        type: "number",
-                        "aria-labelledby": "input-slider",
+                        type: 'number',
+                        'aria-labelledby': 'input-slider'
                       }}
                     />
                   </Grid>
@@ -804,16 +724,9 @@ const SitnGoTable = (props) => {
                     <Slider
                       value={thirdPlace}
                       onChange={(e, val) => {
-                        if (
-                          val >
-                          Math.floor(buyIn * tableSize * 0.95) -
-                            firstPlace -
-                            secondPlace
-                        )
+                        if (val > Math.floor(buyIn * tableSize * 0.95) - firstPlace - secondPlace)
                           setThirdPlace(
-                            Math.floor(buyIn * tableSize * 0.95) -
-                            firstPlace -
-                            secondPlace
+                            Math.floor(buyIn * tableSize * 0.95) - firstPlace - secondPlace
                           );
                         else setThirdPlace(val);
                       }}
@@ -822,7 +735,7 @@ const SitnGoTable = (props) => {
                       getAriaValueText={(val) => val}
                       min={0}
                       max={Math.floor(buyIn * tableSize * 0.95)}
-                      color={"primary"}
+                      color={'primary'}
                       className={classes.modal_slider}
                     />
                   </Grid>
@@ -833,16 +746,9 @@ const SitnGoTable = (props) => {
                       margin="dense"
                       onChange={(event) => {
                         let val = Number(event.target.value);
-                        if (
-                          val >
-                          Math.floor(buyIn * tableSize * 0.95) -
-                          firstPlace -
-                          secondPlace
-                        )
-                        setThirdPlace(
-                            Math.floor(buyIn * tableSize * 0.95) -
-                            firstPlace -
-                            secondPlace
+                        if (val > Math.floor(buyIn * tableSize * 0.95) - firstPlace - secondPlace)
+                          setThirdPlace(
+                            Math.floor(buyIn * tableSize * 0.95) - firstPlace - secondPlace
                           );
                         else setThirdPlace(val);
                       }}
@@ -850,8 +756,8 @@ const SitnGoTable = (props) => {
                         step: 1,
                         min: 0,
                         max: Math.floor(buyIn * tableSize * 0.95),
-                        type: "number",
-                        "aria-labelledby": "input-slider",
+                        type: 'number',
+                        'aria-labelledby': 'input-slider'
                       }}
                     />
                   </Grid>
@@ -873,7 +779,7 @@ const SitnGoTable = (props) => {
                   />
                 }
                 label=""
-              />{" "}
+              />{' '}
             </Grid>
             {privacy ? (
               <Grid container spacing={3}>
@@ -889,22 +795,18 @@ const SitnGoTable = (props) => {
                       autoComplete="current-password"
                       InputProps={{
                         value: password,
-                        onChange: (e) => setPassword(e.target.value),
+                        onChange: (e) => setPassword(e.target.value)
                       }}
-                    />{" "}
+                    />{' '}
                   </FormControl>
                 </Grid>
               </Grid>
             ) : (
-              ""
+              ''
             )}
 
             <Grid container spacing={3} className="mt-3">
-              <Button
-                color="primary"
-                style={{ margin: "auto auto" }}
-                onClick={createTable}
-              >
+              <Button color="primary" style={{ margin: 'auto auto' }} onClick={createTable}>
                 Create
               </Button>
             </Grid>
@@ -918,7 +820,7 @@ const SitnGoTable = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
     {
-      PIVXChange: global.Actions.LoginAction.PIVXChange,
+      PIVXChange: global.Actions.LoginAction.PIVXChange
     },
     dispatch
   );

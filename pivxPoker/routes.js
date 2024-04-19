@@ -32,7 +32,6 @@ const upload = multer();
 const router = require('express').Router();
 const path = require('path');
 
-
 //table data
 router.get('/getTableData/:category/:id', adminController.getTableData);
 router.get('/getTableData1/:category?', adminController.test);
@@ -41,7 +40,6 @@ router.get('/getTableData1/:category?', adminController.test);
 router.get('/admin/total', requireAuth, requireAdmin, adminController.getTotal);
 router.get('/admin/visits/:from/:to', requireAuth, requireAdmin, adminController.getVisit);
 router.get('/admin/recharges/:from/:to', requireAuth, requireAdmin, adminController.getWallet);
-
 
 //User Admin
 router.get("/users/:page?/:search?", requireAuth, requireAdmin, adminController.getUsers);

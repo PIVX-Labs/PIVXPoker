@@ -77,15 +77,6 @@ const post = async (endpoint, body, contentType = 'application/json', header = [
     return await request(endpoint, 'POST', body, contentType, header);
 };
 
-
-// const getNewAddress=async ()=>{
-//     var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getnewaddress","params":[]}`;
-//     const respond=await unirest.post(`http://${USER}:${PASS}@${process.env.WALLET_URL}:${process.env.WALLET_PORT}/`)
-//     .headers(headers).send(dataString);
-//     return respond;
-
-// };
-
 const getNewAddress=async ()=>{
     var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getnewaddress","params":[]}`;
     const respond= JSON.parse(await post('http://' +

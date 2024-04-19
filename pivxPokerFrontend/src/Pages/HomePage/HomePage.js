@@ -1,11 +1,9 @@
-import { useHistory } from "react-router-dom";
 import { useEffect } from "react";
-import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 import HomePageLayoutContainer from "../../Components/HomePage/HomePageLayoutContainer";
 import Button from "../../StyledComponents/Button";
 import TextLarge from "../../StyledComponents/TextLarge";
-import { withRouter } from "react-router-dom";
 
 const HomePage = ({ credential }) => {
   const history = useHistory();

@@ -106,7 +106,7 @@ const RegisterPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
           autoComplete="Referrer"
           className="theme-input"
           value={referrer}
-          onChange={(e) => setReferrer(e.target.value)}
+          onChange={(e) => setReferrer(e.target.value.toLowerCase())}
           placeholder="Referrer"
         ></input>
       </MainFormContainer>
