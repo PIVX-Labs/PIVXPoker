@@ -5,9 +5,7 @@ module.exports = {
     test: 'mongodb://127.0.0.1:27017/pivx_poker',
     options: {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true
+      useUnifiedTopology: true
     }
   },
   jwt: {
@@ -15,9 +13,8 @@ module.exports = {
     secret: process.env.JWT_SECRET || 'development_secret',
     expiry: '1d'
   },
-  credentials:{
+  credentials: {
     //for provider credential
     expiry: 10
   }
-
 };

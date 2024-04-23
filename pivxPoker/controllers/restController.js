@@ -3,7 +3,7 @@ const TorIp = require('../models/torIp');
 const Visited = require('../models/visited');
 const FlagLog = require('../models/flagLog');
 
-const jwtDecode = require('jwt-decode');
+const { jwtDecode } = require('jwt-decode');
 const { body, validationResult } = require('express-validator');
 const { getNewAddress, getNewShieldAddress } = require('../utils/pivx');
 const { createToken, hashPassword, verifyPassword } = require('../utils/authentication');
