@@ -136,9 +136,9 @@ exports.postWithdrawal = async (req, res, next) => {
   if (passwordValid) {
     const recharges = await Recharge.find({ user: user.id });
     for (let i = 0; i < recharges.length; i++) {
-      console.log(recharges[i].txid);
+      //console.log(recharges[i].txid);
       const respond = await getTransaction(recharges[i].txid);
-      console.log(respond);
+      //console.log(respond);
       if (respond.error != null || respond.result.confirmations < 6) {
         return res.status(401).json({
           error:
@@ -151,7 +151,7 @@ exports.postWithdrawal = async (req, res, next) => {
 
     if (amount > 0) {
       const respond = await sendToAddress(address, amount);
-      console.log(respond.error)
+      //console.log(respond.error)
       if (respond && respond.error == null) {
         const comp = {};
         comp.user = user.id;
