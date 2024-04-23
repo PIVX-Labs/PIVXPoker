@@ -1,26 +1,24 @@
 const mongoose = require('mongoose');
 require('mongoose-long')(mongoose);
-const {NumberLong, PreLong}=require('mongoose-long-integer');
+const { NumberLong, PreLong } = require('mongoose-long-integer');
 NumberLong(mongoose);
 const Schema = mongoose.Schema;
 const FinancialSchema = require('./Financial');
-const BonusSchema=require('./Bonus');
+const BonusSchema = require('./Bonus');
 const Long = mongoose.Schema.Types.Long;
 const userModel = new Schema({
   username: { type: String, required: true, unique: true },
-  email: { type: String},
-  ip: { type: String},
+  email: { type: String },
+  ip: { type: String },
   password: { type: String, required: true },
-  referrer:{
+  referrer: {
     type: String
   },
-  downlines:{
-    type:[{type:String}]
+  downlines: {
+    type: [{ type: String }]
   },
-  bonus:{
-    type:[
-      BonusSchema
-    ]
+  bonus: {
+    type: [BonusSchema]
   },
   role: { type: String, required: true, default: 'user' },
   level: { type: Number, default: 1 },
@@ -60,6 +58,10 @@ const userModel = new Schema({
   created: { type: Date, default: Date.now },
   updatedAt: {
     type: Number
+  },
+  flagged: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -73,6 +75,6 @@ userModel.options.toJSON.transform = (doc, ret) => {
   delete obj.downlines;
   return obj;
 };
-userModel.post('save',PreLong);
+userModel.post('save', PreLong);
 
 module.exports = mongoose.model('user', userModel);
