@@ -1,4 +1,4 @@
-import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 import yellowButton from '../images/Yelow Button.png';
 import grayButton from '../images/grey button.png';
 import brightRedButton from '../images/Bright Red Button.jpg';
@@ -15,7 +15,7 @@ const variantBackgroundObj: { [k in ButtonVariant]: string } = {
   green: 'linear-gradient( 183deg ,#9621ff,#7d21ff)'
 };
 
-const buttonSizeObj: { [k in ButtonSize]: FlattenSimpleInterpolation } = {
+const buttonSizeObj: { [k in ButtonSize]: any } = {
   small: css`
     padding: 5px 0px;
     min-width: 150px;

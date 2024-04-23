@@ -1,24 +1,10 @@
 import styled from 'styled-components';
 import React, { useEffect, useState } from 'react';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Slider from '@material-ui/core/Slider';
-import Input from '@material-ui/core/Input';
+
 import handleToast, { success } from '../../Components/toast';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import Paper from '@material-ui/core/Paper';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+
 import { useHistory } from 'react-router-dom';
 //datePicker
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -40,14 +26,32 @@ import {
   AiTwotoneLock,
   AiOutlineCheck
 } from 'react-icons/ai';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
 import Button from '../../Components/Button';
-import Checkbox from '@material-ui/core/Checkbox';
+import Checkbox from '@mui/material/Checkbox';
 import { showKilo, showTurnTime, showTableSize, showDot } from '../../shared/printConfig';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
 import lobbyStyle from '../../jss/pages/lobbyStyle';
+import {
+  FormControl,
+  FormControlLabel,
+  Grid,
+  Input,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Slider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField
+} from '@mui/material';
+
+import { makeStyles, withStyles } from '@mui/styles';
 
 const useStyles = makeStyles(lobbyStyle);
 
@@ -389,10 +393,7 @@ const TournamentTable = (props) => {
         open={createModal}
         onClose={() => setCreateModal(!createModal)}
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500
-        }}
+  
         className={classes.modal}
       >
         <Fade in={createModal}>
@@ -583,7 +584,7 @@ const TournamentTable = (props) => {
               </Grid>
             </Grid>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} mt={3}>
               <TableContainer component={Paper} className={classes.tableContainer}>
                 <Table className={classes.table} size="small" aria-label="a dense table">
                   <TableHead>

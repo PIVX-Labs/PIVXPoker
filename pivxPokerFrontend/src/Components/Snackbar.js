@@ -2,12 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import cx from "classnames";
 
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import Snack from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
+// @mui/material components
+import { makeStyles } from "@mui/styles";
+import Snack from "@mui/material/Snackbar";
+import IconButton from "@mui/material/IconButton";
 
-// @material-ui/icons
+// @mui/icons-material
 import {MdClose} from "react-icons/md";
 
 import styles from "../jss/snackbarContentStyle.js";
@@ -29,7 +29,7 @@ export default function Snackbar(props) {
         aria-label="Close"
         color="inherit"
         onClick={() => props.closeNotification()}
-      >
+        size="large">
         <MdClose className={classes.close} />
       </IconButton>
     ];

@@ -1,8 +1,7 @@
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
-import Modal from '@material-ui/core/Modal';
-import { makeStyles } from '@material-ui/core/styles';
+import Fade from '@mui/material/Fade';
+import Grid from '@mui/material/Grid';
+import Modal from '@mui/material/Modal';
+import { makeStyles } from '@mui/styles';
 import Button from 'Components/Button';
 import handleToast from 'Components/toast';
 import lobbyStyle from 'jss/pages/lobbyStyle';
@@ -18,9 +17,9 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
   const { apiConfig, ApiCall } = global;
   const [image, setImage] = useState(null);
   const [imageCrop, setImageCrop] = useState({
-    src: `${apiConfig.api}/uploads/avatars/${
-      credential.loginUserAvatar ? credential.loginUserAvatar : 'user.png'
-    }`,
+    src: credential.loginUserAvatar
+      ? `${apiConfig.api}/uploads/avatars/${credential.loginUserAvatar}`
+      : null,
     crop: { unit: 'px', aspect: 1 / 1, width: 200 }
   });
   const handleFileChange = (e) => {
@@ -32,7 +31,6 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
   };
 
   const postProfile = () => {
-    // console.log(nickname.name);
     (async () => {
       let base64Image;
       if (image) {
@@ -81,6 +79,7 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
     })();
   };
 
+
   return (
     <Modal
       aria-labelledby="transition-profile-title"
@@ -88,10 +87,6 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
       open={profileModal}
       onClose={() => setProfileModal(!profileModal)}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500
-      }}
       className={classes.modal}
     >
       <Fade in={profileModal}>
@@ -111,12 +106,15 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
           <Grid container spacing={3}>
             <Grid item className={classes.modal_center}>
               <div className={classes.imageCropUploader}>
-                <ReactCrop
-                  src={imageCrop.src}
-                  onImageLoaded={setImage}
-                  crop={imageCrop.crop}
-                  onChange={(arg) => setImageCrop({ ...imageCrop, crop: arg })}
-                />
+                {imageCrop.src && (
+                  <ReactCrop
+                    onImageLoaded={setImage}
+                    crop={imageCrop.crop}
+                    onChange={(arg) => setImageCrop({ ...imageCrop, crop: arg })}
+                  >
+                    <img src={imageCrop.src} alt="avatar" onLoad={setImage} />
+                  </ReactCrop>
+                )}
                 <br />
                 <input type="file" id="file" onChange={handleFileChange} onClick={() => {}} />
                 <label htmlFor="file" className={classes.btn}>
@@ -126,7 +124,7 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
             </Grid>
           </Grid>
           <Grid container spacing={1}>
-            <Grid item md={12} lg={6}>
+            <Grid item md={12} lg={8}>
               <Grid container>
                 <Grid item xs={4}>
                   Username:
@@ -136,7 +134,7 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item md={12} lg={6}>
+            <Grid item md={12} lg={4}>
               <Grid container>
                 <Grid item xs={4}>
                   Level:

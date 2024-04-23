@@ -1,19 +1,19 @@
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Grid from '@material-ui/core/Grid';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Paper from '@material-ui/core/Paper';
-import Select from '@material-ui/core/Select';
-import Slider from '@material-ui/core/Slider';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
+import Select from '@mui/material/Select';
+import Slider from '@mui/material/Slider';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -21,11 +21,10 @@ import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import handleToast from '../../Components/toast';
 
-import Backdrop from '@material-ui/core/Backdrop';
-import Checkbox from '@material-ui/core/Checkbox';
-import Fade from '@material-ui/core/Fade';
-import Modal from '@material-ui/core/Modal';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import Checkbox from '@mui/material/Checkbox';
+import Fade from '@mui/material/Fade';
+import Modal from '@mui/material/Modal';
+import { makeStyles, withStyles } from '@mui/styles';
 import {
   AiOutlineArrowDown,
   AiOutlineArrowUp,
@@ -380,10 +379,7 @@ const SitnGoTable = (props) => {
         open={createModal}
         onClose={() => setCreateModal(!createModal)}
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500
-        }}
+   
         className={classes.modal}
       >
         <Fade in={createModal}>
@@ -523,7 +519,7 @@ const SitnGoTable = (props) => {
               <Grid item xs={4} className={classes.modal_label}>
                 Blind Schedule:
               </Grid>
-              <Grid item xs={8} className={classes.modal_field}>
+              <Grid item xs={8} className={classes.modal_field} >
                 <FormControl className={classes.formControl}>
                   <InputLabel id="demo-blind-select-label">Blind Schedule</InputLabel>
                   <Select
@@ -554,7 +550,7 @@ const SitnGoTable = (props) => {
               </Grid>
             </Grid>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} mt={3}>
               <TableContainer component={Paper} className={classes.tableContainer}>
                 <Table className={classes.table} size="small" aria-label="a dense table">
                   <TableHead>

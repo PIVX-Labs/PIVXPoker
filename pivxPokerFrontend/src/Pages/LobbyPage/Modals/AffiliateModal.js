@@ -1,8 +1,7 @@
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
-import Modal from '@material-ui/core/Modal';
-import { makeStyles } from '@material-ui/core/styles';
+import Fade from '@mui/material/Fade';
+import Grid from '@mui/material/Grid';
+import Modal from '@mui/material/Modal';
+import { makeStyles } from '@mui/styles';
 import Button from 'Components/Button';
 import CustomTable from 'Components/CustomTable';
 import StyledTab from 'Components/StyledTab';
@@ -67,10 +66,6 @@ const AffiliateModal = ({ affiliateModal, setAffiliateModal, credential }) => {
       open={affiliateModal}
       onClose={cancelModal}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500
-      }}
       className={classes.modal}
     >
       <Fade in={affiliateModal}>
@@ -85,7 +80,7 @@ const AffiliateModal = ({ affiliateModal, setAffiliateModal, credential }) => {
             <Grid item className={classes.modal_center}>
               <span className={classes.modal_address}>
                 {apiConfig.app + apiConfig.signUp.url + '/' + credential.loginUserName}
-              </span>{' '}
+              </span>
               &nbsp;
               <Button
                 color="pivx1"

@@ -688,7 +688,7 @@ const lobbyStyle = (theme) => ({
 
 
 
-  [theme.breakpoints.down("lg")]: {
+  [theme.breakpoints.down('xl')]: {
     slider: {
       width: "400px",
     },
@@ -761,7 +761,7 @@ const lobbyStyle = (theme) => ({
       },
     }
   },
-  [theme.breakpoints.down("md")]: {
+  [theme.breakpoints.down('lg')]: {
     userAvatar:{
       width:'45px',
       height:'45px'
@@ -854,7 +854,7 @@ const lobbyStyle = (theme) => ({
       },
     },
   },
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down('md')]: {
     userAvatar:{
       width:'40px',
       height:'40px'
@@ -990,7 +990,7 @@ const lobbyStyle = (theme) => ({
       },
     },
   },
-  [theme.breakpoints.down("xs")]: {
+  [theme.breakpoints.down('sm')]: {
     userAvatar:{
       width:'35px',
       height:'35px'
