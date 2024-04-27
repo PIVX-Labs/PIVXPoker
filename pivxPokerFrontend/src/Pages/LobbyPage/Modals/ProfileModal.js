@@ -79,7 +79,6 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
     })();
   };
 
-
   return (
     <Modal
       aria-labelledby="transition-profile-title"
@@ -108,15 +107,14 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
               <div className={classes.imageCropUploader}>
                 {imageCrop.src && (
                   <ReactCrop
-                    onImageLoaded={setImage}
                     crop={imageCrop.crop}
                     onChange={(arg) => setImageCrop({ ...imageCrop, crop: arg })}
                   >
-                    <img src={imageCrop.src} alt="avatar" onLoad={setImage} />
+                    <img src={imageCrop.src} alt="avatar" onLoad={(e) => setImage(e.target)} />
                   </ReactCrop>
                 )}
                 <br />
-                <input type="file" id="file" onChange={handleFileChange} onClick={() => {}} />
+                <input type="file" id="file" accept="image/*" onChange={handleFileChange} onClick={() => {}} />
                 <label htmlFor="file" className={classes.btn}>
                   Avatar
                 </label>
