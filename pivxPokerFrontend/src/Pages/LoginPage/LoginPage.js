@@ -31,7 +31,7 @@ const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
   let [password, setPassword] = useState('');
 
   const loginValidation = () => {
-    if (userName == null || userName == '') {
+    if (userName === null || userName === '') {
       handleToast("Name can't be blank");
       return false;
     } else if (password.length < 6) {

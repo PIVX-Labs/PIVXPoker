@@ -29,7 +29,7 @@ The /Pages/ folder includes folders that are for each of the diffrent groups, an
 
 /LobbyPage/ contains a large amount of code and mushes a lot of the pages together that aren't "sitting" and playing the game. This is the page that shows the "details" pages for most things. This would be where you would go to change files that are under the /lobby/ slug. In the LobbyPage there is a /Modals/ file that includes a lot of the Modals for things like Profiles, affiliate, deposit, etc. Its a good place to look if you can't find what you are looking for.
 
-The /LoginPage/ and /ResgisterPage/ are pretty self explainitory outside of the typo.
+The /LoginPage/ and /RegisterPage/ are pretty self explainitory outside of the typo.
 
 The /shared/ file contains a bunch of settings that can be useful, the main one to focus on would be the apiConfig.js which if you don't put the right info in to will cause the system to not work.
 

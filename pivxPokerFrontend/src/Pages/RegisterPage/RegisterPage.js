@@ -6,7 +6,7 @@ import HomePageLayoutContainer from "../../Components/HomePage/HomePageLayoutCon
 import Button from "../../StyledComponents/Button";
 import { useState, useEffect } from "react";
 import TextLarge from "../../StyledComponents/TextLarge";
-import handleToast, { success } from "../../Components/toast";
+import handleToast from "../../Components/toast";
 
 import {
   MainFormButtonContainer,
@@ -29,7 +29,7 @@ const RegisterPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
     }
   }, [credential]);
   const handleValidation = () => {
-    if (userName == null || userName == "") {
+    if (userName === null || userName === "") {
       handleToast("user name can't be blank");
       return false;
     } else if (password.length < 6) {

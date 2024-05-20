@@ -67,7 +67,7 @@ const ProfileModal = ({ profileModal, setProfileModal, credential, photoChange }
           credential.loginToken,
           data
         );
-        if (response.status == 200) {
+        if (response.status === 200) {
           photoChange(response.data.profilePhoto);
         }
         setProfileModal(false);

@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import "./App.css";
 import HomePage from "./Pages/HomePage/HomePage";
 import { Router, Route, Switch } from "react-router-dom";
-import RegisterPage from "./Pages/RegisterPage/ResgisterPage";
+import RegisterPage from "./Pages/RegisterPage/RegisterPage";
 import LoginPage from "./Pages/LoginPage/LoginPage";
 import LobbyPage from "./Pages/LobbyPage/LobbyPage";
 import CashGame from "./Pages/Games/cashGame";

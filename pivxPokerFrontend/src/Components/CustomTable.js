@@ -203,7 +203,7 @@ export default function CustomTable({ headCells, rows, selectable, toolbar }) {
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(true);
+  const [dense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
@@ -309,7 +309,7 @@ export default function CustomTable({ headCells, rows, selectable, toolbar }) {
                         ''
                       )}
                       {row.map((ele, key) =>
-                        key == 0 ? (
+                        key === 0 ? (
                           <TableCell component="th" id={labelId} scope="row" key={key}>
                             {ele}
                           </TableCell>

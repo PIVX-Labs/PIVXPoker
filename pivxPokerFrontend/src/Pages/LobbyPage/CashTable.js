@@ -8,7 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Slider from '@mui/material/Slider';
-import handleToast, { success } from '../../Components/toast';
+import handleToast from '../../Components/toast';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -123,8 +123,8 @@ const CashTable = (props) => {
     if (data.length > 0) {
       data.sort((a, b) => {
         if (sort.name === 'Name') {
-          var x = a.name.toLowerCase();
-          var y = b.name.toLowerCase();
+          let x = a.name.toLowerCase();
+          let y = b.name.toLowerCase();
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -143,8 +143,8 @@ const CashTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Blinds') {
-          var x = a.blinds;
-          var y = b.blinds;
+          let x = a.blinds;
+          let y = b.blinds;
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -163,8 +163,8 @@ const CashTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Buy In') {
-          var x = a.buyIn[0];
-          var y = b.buyIn[0];
+          let x = a.buyIn[0];
+          let y = b.buyIn[0];
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -183,8 +183,8 @@ const CashTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Turn Time') {
-          var x = a.turnTime;
-          var y = b.turnTime;
+          let x = a.turnTime;
+          let y = b.turnTime;
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -203,8 +203,8 @@ const CashTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Seats') {
-          var x = parseInt(a.playersCount);
-          var y = parseInt(b.playersCount);
+          let x = parseInt(a.playersCount);
+          let y = parseInt(b.playersCount);
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -257,7 +257,7 @@ const CashTable = (props) => {
         password
       },
       (res) => {
-        if (res.status == true) {
+        if (res.status === true) {
           props.PIVXChange(res.pivx);
           history.push('/games/cash/' + res.id);
         } else {
@@ -387,7 +387,7 @@ const CashTable = (props) => {
                   >
                     {blindsList.map((ele, key) => (
                       <MenuItem className={classes.modal_select_item} key={key} value={ele}>
-                        {showKilo(ele)} / {showKilo(ele == 2 ? 5 : ele * 2)}
+                        {showKilo(ele)} / {showKilo(ele === 2 ? 5 : ele * 2)}
                       </MenuItem>
                     ))}
                   </Select>

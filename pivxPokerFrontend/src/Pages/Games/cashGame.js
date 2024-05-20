@@ -18,7 +18,6 @@ import {
   showPotChips,
   showDot,
   showTurnTime,
-  showTableSize,
   showMaxTimeBank
 } from '../../shared/printConfig';
 import { AiFillWechat, AiOutlineClose, AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
@@ -79,7 +78,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
   };
   const logout = () => {
     socket.emit('cash:leave', match.params.room, (res) => {
-      if (res == true) {
+      if (res === true) {
         LogOutSuccess();
         history.push('/');
       }
@@ -101,7 +100,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
   const leaveTable = () => {
     setStandMenu(null);
     socket.emit('cash:leave', match.params.room, (res) => {
-      if (res == true) {
+      if (res === true) {
         setTable((table) => {
           const players = table.players.map((ele) => ele);
           players[mySeat] = null;
@@ -167,7 +166,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
           setTable(res.cashGame);
           PIVXChange(res.pivx);
           let id = res.cashGame.players.findIndex(
-            (ele) => ele != null && ele.user.id == credential.loginUserId
+            (ele) => ele != null && ele.user.id === credential.loginUserId
           );
           console.log('cash:join emit');
 
@@ -181,7 +180,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
   const sendMessage = (e) => {
     console.log(e.target.input_message.value);
     e.preventDefault();
-    if (e.target.input_message.value != '') {
+    if (e.target.input_message.value !== '') {
       socket.emit('chat:send', 'cash_' + match.params.room, e.target.input_message.value);
       setMessage('');
     }
@@ -197,9 +196,9 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
         <div className="message-view">
           {messageList.map((msg, i) => (
             <div key={i}>
-              <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+              <span className={credential.loginUserId === msg.sender.id ? ' text-success ' : ''}>
                 {msg.sender.username}:{' '}
-                <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+                <span className={credential.loginUserId === msg.sender.id ? ' text-success ' : ''}>
                   {msg.message}
                 </span>{' '}
               </span>
@@ -286,7 +285,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
         setBuyIn(res.cashGame.buyIn[0]);
         console.log(res.cashGame);
         let id = res.cashGame.players.findIndex(
-          (ele) => ele != null && ele.user.id == credential.loginUserId
+          (ele) => ele != null && ele.user.id === credential.loginUserId
         );
 
         console.log('enter emit');
@@ -320,7 +319,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
         console.log('cash start');
         console.log(cashGame.players);
         let id = cashGame.players.findIndex(
-          (ele) => ele != null && ele.user.id == credential.loginUserId
+          (ele) => ele != null && ele.user.id === credential.loginUserId
         );
         if (
           id > -1 &&
@@ -592,13 +591,13 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
           <div className={classes.table_pad}>
             {table
               ? table.players.map((ele, key) => {
-                  if (ele == null)
+                  if (ele === null)
                     return (
                       <div
                         key={key}
                         className={clsx(
                           {
-                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key !== 0,
                             stand: ele != null && ele.stand
                           },
                           'users-on-board'
@@ -633,13 +632,13 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                         key={key}
                         className={clsx(
                           {
-                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key !== 0,
                             stand: ele != null && ele.stand
                           },
                           'users-on-board'
                         )}
                         onClick={(event) => {
-                          if (key == mySeat) setStandMenu(event.currentTarget);
+                          if (key === mySeat) setStandMenu(event.currentTarget);
                         }}
                       >
                         <div className="chips-pad">
@@ -655,9 +654,9 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                           <div className="chips-amount total">{ele.bet > 0 ? ele.bet : ''}</div>
                         </div>
 
-                        {ele.ready == true &&
-                        ele.fold == false &&
-                        ele.stand == false &&
+                        {ele.ready === true &&
+                        ele.fold === false &&
+                        ele.stand === false &&
                         ele.cards != null ? (
                           ele.win ? (
                             <div className="player-cards animate__animated animate__heartBeat animate__repeat-3 animate__slower">
@@ -709,7 +708,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                           />
                         )}
 
-                        {key == table.dealer ? (
+                        {key === table.dealer ? (
                           <Avatar
                             className="user-dealer"
                             name="D"
@@ -792,9 +791,9 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
               <MenuItem onClick={leaveTable}>Leave</MenuItem>
             </Menu>
             <div className={classes.status_pad}>
-              {loading == 0 ? (
+              {loading === 0 ? (
                 "Click '+' to join the table"
-              ) : loading == 1 ? (
+              ) : loading === 1 ? (
                 <React.Fragment>
                   <CircularProgress color="primary" />
                   <br />
@@ -851,11 +850,11 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                 <Button color="warning" onClick={() => bet('fold')}>
                   Fold
                 </Button>
-                {callStatus == 'allIn' ? (
+                {callStatus === 'allIn' ? (
                   <Button color="danger" onClick={() => bet('allIn')}>
                     All In
                   </Button>
-                ) : callStatus == 'allIn_minRaise' ? (
+                ) : callStatus === 'allIn_minRaise' ? (
                   <React.Fragment>
                     <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0
@@ -866,7 +865,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                       All In
                     </Button>
                   </React.Fragment>
-                ) : callStatus == 'allIn_maxRaise' ? (
+                ) : callStatus === 'allIn_maxRaise' ? (
                   <React.Fragment>
                     <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
@@ -900,7 +899,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                     >
                       <AiOutlinePlus />
                     </Button>
-                    {raise == maxRaise ? (
+                    {raise === maxRaise ? (
                       <Button color="danger" onClick={() => bet('allIn')}>
                         All In
                       </Button>
@@ -1232,7 +1231,7 @@ const CashGame = ({ match, history, status, credential, PIVXChange, LogOutSucces
                     Blinds:
                   </Grid>
                   <Grid item xs={6} className={classes.modal_field}>
-                    {table.blinds}/{table.blinds == 2 ? 5 : table.blinds * 2}
+                    {table.blinds}/{table.blinds === 2 ? 5 : table.blinds * 2}
                   </Grid>
                 </Grid>
                 <Grid container spacing={3}>

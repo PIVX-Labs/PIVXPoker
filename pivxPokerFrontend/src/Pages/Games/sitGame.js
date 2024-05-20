@@ -19,7 +19,6 @@ import PokerTableMobile from '../../images/poker-table-mobile.png';
 import PrettoSlider from '../../Components/PrettoSlider';
 import {
   AiFillWechat,
-  AiOutlineClose,
   AiOutlineLogout,
   AiOutlinePlus,
   AiOutlineMinus
@@ -49,7 +48,6 @@ import TableRow from '@mui/material/TableRow';
 import {
   showKilo,
   showTurnTime,
-  showTableSize,
   showDot,
   showPotChips
 } from '../../shared/printConfig';
@@ -85,9 +83,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
   const xs = useMediaQuery(theme.breakpoints.up('xs'));
   const [winnerText, setWinnerText] = useState('');
   const [resultText, setResultText] = useState('');
-  const [passwordModal, setPasswordModal] = useState(false);
   const [password, setPassword] = useState('');
-  const [seat, setSeat] = useState('');
   const [socket, setSocket] = useState('');
   const [chatOpen, setChatOpen] = useState(!status.mobileView);
   let [message, setMessage] = useState('');
@@ -111,7 +107,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
   };
   const logout = () => {
     socket.emit('sit:leave', match.params.room, (res) => {
-      if (res == true) {
+      if (res === true) {
         LogOutSuccess();
         history.push('/');
       }
@@ -133,7 +129,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
   const leaveTable = () => {
     setStandMenu(null);
     socket.emit('sit:leave', match.params.room, (res) => {
-      if (res == true) {
+      if (res === true) {
         setTable((table) => {
           const players = table.players.map((ele) => ele);
           players[mySeat] = null;
@@ -187,7 +183,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
   const sendMessage = (e) => {
     console.log(e.target.input_message.value);
     e.preventDefault();
-    if (e.target.input_message.value != '') {
+    if (e.target.input_message.value !== '') {
       socket.emit('chat:send', 'sit_' + match.params.room, e.target.input_message.value);
       setMessage('');
     }
@@ -203,9 +199,9 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
         <div className="message-view">
           {messageList.map((msg, i) => (
             <div key={i}>
-              <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+              <span className={credential.loginUserId === msg.sender.id ? ' text-success ' : ''}>
                 {msg.sender.username}:{' '}
-                <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+                <span className={credential.loginUserId === msg.sender.id ? ' text-success ' : ''}>
                   {msg.message}
                 </span>{' '}
               </span>
@@ -276,7 +272,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
       socket.emit('sit:enter', match.params.room, (res) => {
         setTable(res.sitGame);
         let id = res.sitGame.players.findIndex(
-          (ele) => ele != null && ele.user.id == credential.loginUserId
+          (ele) => ele != null && ele.user.id === credential.loginUserId
         );
 
         console.log('enter emit');
@@ -310,7 +306,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
         console.log('sit start');
         console.log(sitGame.players);
         let id = sitGame.players.findIndex(
-          (ele) => ele != null && ele.user.id == credential.loginUserId
+          (ele) => ele != null && ele.user.id === credential.loginUserId
         );
         if (id > -1 && !sitGame.players[id].fold) {
           setMySeat(id);
@@ -466,7 +462,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
         console.log('sit:third');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
-            if (table.players[positions[i]].user.id == credential.loginUserId) {
+            if (table.players[positions[i]].user.id === credential.loginUserId) {
               setPlace(3);
             }
             table.players[positions[i]] = null;
@@ -480,7 +476,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
         console.log('sit:second');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
-            if (table.players[positions[i]].user.id == credential.loginUserId) {
+            if (table.players[positions[i]].user.id === credential.loginUserId) {
               setPlace(2);
             }
             table.players[positions[i]] = null;
@@ -494,7 +490,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
         console.log('sit:first');
         setClosed(true);
         setTable((table) => {
-          if (table.players[position].user.id == credential.loginUserId) {
+          if (table.players[position].user.id === credential.loginUserId) {
             setPlace(1);
           }
           return {
@@ -627,13 +623,13 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
           <div className={classes.table_pad}>
             {table
               ? table.players.map((ele, key) => {
-                  if (ele == null)
+                  if (ele === null)
                     return (
                       <div
                         key={key}
                         className={clsx(
                           {
-                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key !== 0,
                             stand: ele != null && ele.stand
                           },
                           'users-on-board'
@@ -662,13 +658,13 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
                         key={key}
                         className={clsx(
                           {
-                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key !== 0,
                             stand: ele != null && ele.stand
                           },
                           'users-on-board'
                         )}
                         onClick={(event) => {
-                          if (key == mySeat) setStandMenu(event.currentTarget);
+                          if (key === mySeat) setStandMenu(event.currentTarget);
                         }}
                       >
                         <div className="chips-pad">
@@ -684,7 +680,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
                           <div className="chips-amount total">{ele.bet > 0 ? ele.bet : ''}</div>
                         </div>
 
-                        {ele.fold == false && ele.cards != null ? (
+                        {ele.fold === false && ele.cards != null ? (
                           ele.win ? (
                             <div className="player-cards animate__animated animate__heartBeat animate__repeat-3 animate__slower">
                               <div className="cards">
@@ -734,7 +730,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
                             round="80px"
                           />
                         )}
-                        {key == table.dealer ? (
+                        {key === table.dealer ? (
                           <Avatar
                             className="user-dealer"
                             name="D"
@@ -866,11 +862,11 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
                 <Button color="warning" onClick={() => bet('fold')}>
                   Fold
                 </Button>
-                {callStatus == 'allIn' ? (
+                {callStatus === 'allIn' ? (
                   <Button color="danger" onClick={() => bet('allIn')}>
                     All In
                   </Button>
-                ) : callStatus == 'allIn_minRaise' ? (
+                ) : callStatus === 'allIn_minRaise' ? (
                   <React.Fragment>
                     <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0
@@ -881,7 +877,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
                       All In
                     </Button>
                   </React.Fragment>
-                ) : callStatus == 'allIn_maxRaise' ? (
+                ) : callStatus === 'allIn_maxRaise' ? (
                   <React.Fragment>
                     <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
@@ -916,7 +912,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
                       <AiOutlinePlus />
                     </Button>
 
-                    {raise == maxRaise ? (
+                    {raise === maxRaise ? (
                       <Button color="danger" onClick={() => bet('allIn')}>
                         All In
                       </Button>
@@ -1652,7 +1648,7 @@ const SitGame = ({ match, history, status, credential, PIVXChange, LogOutSuccess
             <div class="firework-14"></div>
             <div class="firework-15"></div>
             <div class="congratulation">
-              Congratulations! You take {place == 1 ? '1st' : place == 2 ? '2nd' : '3rd'} place.
+              Congratulations! You take {place === 1 ? '1st' : place === 2 ? '2nd' : '3rd'} place.
             </div>
           </Backdrop>
         ) : closed ? (

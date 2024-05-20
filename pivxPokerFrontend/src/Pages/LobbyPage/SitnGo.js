@@ -108,8 +108,6 @@ const headings = ['Name', 'Buy In', 'Prize Pool', 'Players', 'Status'];
 
 const SitnGoTable = (props) => {
   const history = useHistory();
-
-  const { apiConfig } = global;
   const classes = useStyles();
   const [createModal, setCreateModal] = React.useState(false);
   const [sort, setSort] = useState('');
@@ -154,8 +152,8 @@ const SitnGoTable = (props) => {
     if (data.length > 0) {
       data.sort((a, b) => {
         if (sort.name === 'Name') {
-          var x = a.name.toLowerCase();
-          var y = b.name.toLowerCase();
+          let x = a.name.toLowerCase();
+          let y = b.name.toLowerCase();
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -174,8 +172,8 @@ const SitnGoTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Buy In') {
-          var x = a.buyIn;
-          var y = b.buyIn;
+          let x = a.buyIn;
+          let y = b.buyIn;
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -194,8 +192,8 @@ const SitnGoTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Prize Pool') {
-          var x = a.firstPlace + a.secondPlace + a.thirdPlace;
-          var y = b.firstPlace + b.secondPlace + b.thirdPlace;
+          let x = a.firstPlace + a.secondPlace + a.thirdPlace;
+          let y = b.firstPlace + b.secondPlace + b.thirdPlace;
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -214,8 +212,8 @@ const SitnGoTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Players') {
-          var x = parseInt(a.playersCount);
-          var y = parseInt(b.playersCount);
+          let x = parseInt(a.playersCount);
+          let y = parseInt(b.playersCount);
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -234,8 +232,8 @@ const SitnGoTable = (props) => {
             return 0;
           }
         } else if (sort.name === 'Status') {
-          var x = a.status;
-          var y = b.status;
+          let x = a.status;
+          let y = b.status;
           if (sort.type) {
             if (x < y) {
               return -1;
@@ -294,7 +292,7 @@ const SitnGoTable = (props) => {
         password
       },
       (res) => {
-        if (res.status == true) {
+        if (res.status === true) {
           props.PIVXChange(res.pivx);
           history.push('/games/sit/' + res.id);
         } else {

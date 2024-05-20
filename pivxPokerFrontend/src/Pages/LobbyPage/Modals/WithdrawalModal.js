@@ -28,7 +28,7 @@ const WithdrawalModal = ({
       handleToast('More than 100,000,000 satoshi allowed to withdraw!');
       return;
     }
-    if (credential.loginUserWalletAddress == '') {
+    if (credential.loginUserWalletAddress === '') {
       handleToast('Iuput your wallet address!');
       return;
     }

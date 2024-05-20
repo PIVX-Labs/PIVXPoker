@@ -111,7 +111,7 @@ const LobbyPage = (props) => {
             res.cashGames.map((ele) => {
               ele.current =
                 ele.players.findIndex(
-                  (ele1) => ele1 == props.credential.loginUserId
+                  (ele1) => ele1 === props.credential.loginUserId
                 ) > -1
                   ? true
                   : false;
@@ -123,7 +123,7 @@ const LobbyPage = (props) => {
             res.tournaments.map((ele) => {
               ele.current =
                 ele.players.findIndex(
-                  (ele1) => ele1 == props.credential.loginUserId
+                  (ele1) => ele1 === props.credential.loginUserId
                 ) > -1
                   ? true
                   : false;
@@ -134,7 +134,7 @@ const LobbyPage = (props) => {
             res.sitGames.map((ele) => {
               ele.current =
                 ele.players.findIndex(
-                  (ele1) => ele1 == props.credential.loginUserId
+                  (ele1) => ele1 === props.credential.loginUserId
                 ) > -1
                   ? true
                   : false;
@@ -159,7 +159,7 @@ const LobbyPage = (props) => {
           res.cashGames.map((ele) => {
             ele.current =
               ele.players.findIndex(
-                (ele1) => ele1 == props.credential.loginUserId
+                (ele1) => ele1 === props.credential.loginUserId
               ) > -1
                 ? true
                 : false;
@@ -172,7 +172,7 @@ const LobbyPage = (props) => {
           res.sitGames.map((ele) => {
             ele.current =
               ele.players.findIndex(
-                (ele1) => ele1 == props.credential.loginUserId
+                (ele1) => ele1 === props.credential.loginUserId
               ) > -1
                 ? true
                 : false;
@@ -183,7 +183,7 @@ const LobbyPage = (props) => {
 
 
 
-          //ISSUE WAS TO DO WITH THE WEIRD SOCKET CONNECTION TRYING TO CONNECT FROMT HE EMIT ON TOURNAMENT GAME HANDLER 
+          //ISSUE WAS TO DO WITH THE WEIRD SOCKET CONNECTION TRYING TO CONNECT FROM THE EMIT ON TOURNAMENT GAME HANDLER 
           //issue still exists and its something to do with it not passing the right data or not grabbing from the right data
           //Make sure to pay attention to socket.on vs socket.emit
           //emit feeds to the router
@@ -196,7 +196,7 @@ const LobbyPage = (props) => {
           res.TournamentGames.map((ele) => {
             ele.current =
               ele.players.findIndex(
-                (ele1) => ele1 == props.credential.loginUserId
+                (ele1) => ele1 === props.credential.loginUserId
               ) > -1
                 ? true
                 : false;

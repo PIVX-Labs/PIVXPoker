@@ -96,7 +96,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
   };
   const logout = () => {
     socket.emit('tournament:leave', match.params.room, (res) => {
-      if (res == true) {
+      if (res === true) {
         LogOutSuccess();
         history.push('/');
       }
@@ -118,7 +118,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
   const leaveTable = () => {
     setStandMenu(null);
     socket.emit('tournament:leave', match.params.room, (res) => {
-      if (res == true) {
+      if (res === true) {
         setTable((table) => {
           const players = table.players.map((ele) => ele);
           players[mySeat] = null;
@@ -175,7 +175,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
   const sendMessage = (e) => {
     console.log(e.target.input_message.value);
     e.preventDefault();
-    if (e.target.input_message.value != '') {
+    if (e.target.input_message.value !== '') {
       socket.emit('chat:send', 'tournament_' + match.params.room, e.target.input_message.value);
       setMessage('');
     }
@@ -191,9 +191,9 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
         <div className="message-view">
           {messageList.map((msg, i) => (
             <div key={i}>
-              <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+              <span className={credential.loginUserId === msg.sender.id ? ' text-success ' : ''}>
                 {msg.sender.username}:{' '}
-                <span className={credential.loginUserId == msg.sender.id ? ' text-success ' : ''}>
+                <span className={credential.loginUserId === msg.sender.id ? ' text-success ' : ''}>
                   {msg.message}
                 </span>{' '}
               </span>
@@ -265,7 +265,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
         console.log(res);
         setTable(res.TournamentGame);
         let id = res.TournamentGame.players.findIndex(
-          (ele) => ele != null && ele.user.id == credential.loginUserId
+          (ele) => ele != null && ele.user.id === credential.loginUserId
         );
 
         console.log('enter emit');
@@ -299,7 +299,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
         console.log('tournament start');
         console.log(TournamentGame.players);
         let id = TournamentGame.players.findIndex(
-          (ele) => ele != null && ele.user.id == credential.loginUserId
+          (ele) => ele != null && ele.user.id === credential.loginUserId
         );
         if (id > -1 && !TournamentGame.players[id].fold) {
           setMySeat(id);
@@ -458,7 +458,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
         console.log('tournament:third');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
-            if (table.players[positions[i]].user.id == credential.loginUserId) {
+            if (table.players[positions[i]].user.id === credential.loginUserId) {
               setPlace(3);
             }
             table.players[positions[i]] = null;
@@ -472,7 +472,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
         console.log('tournament:second');
         setTable((table) => {
           for (let i = 0; i < positions.length; i++) {
-            if (table.players[positions[i]].user.id == credential.loginUserId) {
+            if (table.players[positions[i]].user.id === credential.loginUserId) {
               setPlace(2);
             }
             table.players[positions[i]] = null;
@@ -486,7 +486,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
         console.log('tournament:first');
         setClosed(true);
         setTable((table) => {
-          if (table.players[position].user.id == credential.loginUserId) {
+          if (table.players[position].user.id === credential.loginUserId) {
             setPlace(1);
           }
           return {
@@ -619,13 +619,13 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
           <div className={classes.table_pad}>
             {table
               ? table.players.map((ele, key) => {
-                  if (ele == null)
+                  if (ele === null)
                     return (
                       <div
                         key={key}
                         className={clsx(
                           {
-                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key !== 0,
                             stand: ele != null && ele.stand
                           },
                           'users-on-board'
@@ -654,13 +654,13 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                         key={key}
                         className={clsx(
                           {
-                            'right-hand': key < Math.ceil(table.tableSize / 2) && key != 0,
+                            'right-hand': key < Math.ceil(table.tableSize / 2) && key !== 0,
                             stand: ele != null && ele.stand
                           },
                           'users-on-board'
                         )}
                         onClick={(event) => {
-                          if (key == mySeat) setStandMenu(event.currentTarget);
+                          if (key === mySeat) setStandMenu(event.currentTarget);
                         }}
                       >
                         <div className="chips-pad">
@@ -676,7 +676,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                           <div className="chips-amount total">{ele.bet > 0 ? ele.bet : ''}</div>
                         </div>
 
-                        {ele.fold == false && ele.cards != null ? (
+                        {ele.fold === false && ele.cards != null ? (
                           ele.win ? (
                             <div className="player-cards animate__animated animate__heartBeat animate__repeat-3 animate__slower">
                               <div className="cards">
@@ -726,7 +726,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                             round="80px"
                           />
                         )}
-                        {key == table.dealer ? (
+                        {key === table.dealer ? (
                           <Avatar
                             className="user-dealer"
                             name="D"
@@ -858,11 +858,11 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                 <Button color="warning" onClick={() => bet('fold')}>
                   Fold
                 </Button>
-                {callStatus == 'allIn' ? (
+                {callStatus === 'allIn' ? (
                   <Button color="danger" onClick={() => bet('allIn')}>
                     All In
                   </Button>
-                ) : callStatus == 'allIn_minRaise' ? (
+                ) : callStatus === 'allIn_minRaise' ? (
                   <React.Fragment>
                     <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0
@@ -873,7 +873,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                       All In
                     </Button>
                   </React.Fragment>
-                ) : callStatus == 'allIn_maxRaise' ? (
+                ) : callStatus === 'allIn_maxRaise' ? (
                   <React.Fragment>
                     <Button color="info" onClick={() => bet('call', call)}>
                       {call - table.players[mySeat].bet > 0 ? 'Call ' + call : 'Check'}
@@ -908,7 +908,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
                       <AiOutlinePlus />
                     </Button>
 
-                    {raise == maxRaise ? (
+                    {raise === maxRaise ? (
                       <Button color="danger" onClick={() => bet('allIn')}>
                         All In
                       </Button>
@@ -1644,7 +1644,7 @@ const TournamentGamesC = ({ match, history, status, credential, PIVXChange, LogO
             <div class="firework-14"></div>
             <div class="firework-15"></div>
             <div class="congratulation">
-              Congratulations! You take {place == 1 ? '1st' : place == 2 ? '2nd' : '3rd'} place.
+              Congratulations! You take {place === 1 ? '1st' : place === 2 ? '2nd' : '3rd'} place.
             </div>
           </Backdrop>
         ) : closed ? (
