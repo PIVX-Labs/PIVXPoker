@@ -5,7 +5,6 @@ import { NavLink } from "react-router-dom";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
@@ -25,6 +24,7 @@ import MonetizationOn from "@material-ui/icons/MonetizationOn";
 import Button from "components/CustomButtons/Button";
 
 import styles from "assets/jss/material-dashboard-pro-react/components/authNavbarStyle.js";
+import { AppBar } from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
 

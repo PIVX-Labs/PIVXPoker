@@ -2,6 +2,8 @@ const User = require('../models/user');
 const TorIp = require('../models/torIp');
 const Visited = require('../models/visited');
 const FlagLog = require('../models/flagLog');
+const fs = require('fs');
+const sharp = require('sharp');
 
 const { jwtDecode } = require('jwt-decode');
 const { body, validationResult } = require('express-validator');
@@ -243,31 +245,30 @@ exports.authenticate = async (req, res) => {
 exports.profile = async (req, res, next) => {
   const user = await User.findById(req.user.id);
   if (req.body.avatar) {
-    
     if (user.profilePhoto) {
-      //check if file exists and if it does remove it, should only occur if server has an issue or accounts were created before and the image wasn't 
+      //check if file exists and if it does remove it, should only occur if server has an issue or accounts were created before and the image wasn't
       //copied over
-      if(fs.existsSync('./uploads/avatars/' + user.profilePhoto)){
-          require('fs').unlinkSync('./uploads/avatars/' + user.profilePhoto);
+      if (fs.existsSync('./uploads/avatars/' + user.profilePhoto)) {
+        fs.unlinkSync('./uploads/avatars/' + user.profilePhoto);
       }
     }
-    user.profilePhoto = user.username + '.jpg';
+    user.profilePhoto = user.username + '.webp';
     await user.save();
-    var base64Data = req.body.avatar.replace(/^data:image\/jpeg;base64,/, '');
-    require('fs').writeFile(
-      './uploads/avatars/' + user.profilePhoto,
-      base64Data,
-      'base64',
-      function (err) {
-        if (err) {
-          console.log(err);
-          return res.status(400).json({ error: err });
-        } else {
-          return res.status(200).json({ profilePhoto: user.profilePhoto });
-        }
-      }
-    );
 
+    var base64Data = req.body.avatar.replace(/^data:image\/jpeg;base64,/, '');
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    try {
+      // Convert the base64 image buffer to WebP format
+      const webpBuffer = await sharp(buffer).toFormat('webp').toBuffer();
+
+      await fs.writeFileSync('./uploads/avatars/' + user.profilePhoto, webpBuffer);
+
+      return res.status(200).json({ profilePhoto: user.profilePhoto });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ error });
+    }
   } else {
     return res.status(400).json({});
   }
@@ -325,8 +326,8 @@ exports.getBonus = async (req, res, next) => {
       item.push(ele.amount);
       return item;
     });
-    console.log(downLines)
-    console.log(bonus)
+    console.log(downLines);
+    console.log(bonus);
     return res.status(200).json({
       downLines,
       bonus
