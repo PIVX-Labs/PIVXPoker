@@ -69,8 +69,8 @@ const DepositModal = ({ depositModal, setDepositModal, credential }) => {
               <Grid item className={classes.modal_center}>
                 <QRCode
                   value={
-                    credential.loginUserDepositAddress
-                      ? credential.loginUserDepositAddress
+                    credential.loginUserShieldDepositAddress
+                      ? credential.loginUserShieldDepositAddress
                       : ""
                   }
                   size={128}
@@ -78,14 +78,6 @@ const DepositModal = ({ depositModal, setDepositModal, credential }) => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item className={classes.modal_center}>
-                <span className={classes.modal_address}>
-                  {credential.loginUserDepositAddress}
-                </span>{" "}
-                <Button color="pivx1" round justIcon onClick={copyAddress}>
-                  <AiOutlineCopy />
-                </Button>
-              </Grid>
               <Grid item className={classes.modal_center}>
                 <span className={classes.modal_address}>
                   {credential.loginUserShieldDepositAddress}
