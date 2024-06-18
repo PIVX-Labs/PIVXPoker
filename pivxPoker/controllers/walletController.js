@@ -86,7 +86,7 @@ exports.getShieldWallet = async (req, res, next) => {
 
 
 /**
- * generate the btc Shielded Address new address
+ * generate the pivx Shielded Address new address
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -115,7 +115,7 @@ exports.getNewShieldAddress = async (req, res, next) => {
 };
 
 /**
- * Occures when someone submits a withdrawl request
+ * Occurs when someone submits a withdrawal request
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -180,7 +180,7 @@ exports.postWithdrawal = async (req, res, next) => {
 };
 
 /**
- * When a admin widthraw request is submitted
+ * When a admin withdraw request is submitted
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -219,7 +219,7 @@ exports.getAdminWithdrawal = async (req, res, next) => {
 };
 
 /**
- * removes the adminwithdrawl
+ * removes the admin withdrawal
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -311,7 +311,7 @@ exports.getAdminRecharge = async (req, res, next) => {
 };
 
 /**
- * Shows the withdrawl list
+ * Shows the withdrawal list
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
