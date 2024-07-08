@@ -7,6 +7,7 @@ const apiConfig = {
   endPoint: 'http://127.0.0.1:7777',
   api: 'http://127.0.0.1:7777',
   app: 'http://127.0.0.1:7777',
+  captcha: 'captcha.computingcache.com',
 
   signUp: { url: '/signup', method: 'post' },
   authenticate: { url: '/authenticate', method: 'post' },

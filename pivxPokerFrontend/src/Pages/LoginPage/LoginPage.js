@@ -99,6 +99,9 @@ const LoginPage = ({ credential, LoginSuccess, LogOutSuccess }) => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
         ></Input>
+          <altcha-widget
+            challengeurl = {apiConfig[captcha]}
+          ></altcha-widget>
       </MainFormContainer>
       <MainFormButtonContainer>
         <Button onClick={() => handleLogin()} variant="green">

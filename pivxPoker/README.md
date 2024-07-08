@@ -57,7 +57,11 @@ WALLET_PASSWORD=
 JWT_SECRET=
 DISCORD_WEBHOOK_NEWGAME=
 DNS_APP_URL=
+CAPTCHA_SECRET=
+CAPTCHA_API_KEY=
 ```
+Our system will be using Altcha as the captcha provider. It is a self hosted and POW captcha system. More documentation for setting up Altcha will be provided in the future.
+
 
 The Discord Webhook env format is `ID:TOKEN`, for example (with a fake ID:Token pair):
 `DISCORD_WEBHOOK_NEWGAME=9127598635710559730:0OduM5blLjRS309zzz4pQhINBFhTd-16VDzqrUS5JlqHth7cWRI5Q7uvyCzApXzhT47Y`
